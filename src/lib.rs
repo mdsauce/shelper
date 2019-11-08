@@ -6,11 +6,11 @@ pub fn env_credentials() -> HashMap<String, String> {
     const ACCESS_KEY: &str = "SAUCE_ACCESS_KEY";
     let sauce_username = match env::var(USERNAME) {
         Ok(name) => name,
-        Err(e) => panic!("couldn't find {}: {}", USERNAME, e),
+        Err(e) => panic!("Problem getting environment variable {}: {}", USERNAME, e),
     };
     let sauce_access_key = match env::var(ACCESS_KEY) {
         Ok(name) => name,
-        Err(e) => panic!("couldn't find {}: {}", ACCESS_KEY, e),
+        Err(e) => panic!("Problem getting environment variable {}: {}", ACCESS_KEY, e),
     };
     let mut creds = HashMap::new();
     creds.insert(USERNAME.to_string(), sauce_username);
