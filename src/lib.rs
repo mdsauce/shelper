@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 use std::env;
+extern crate reqwest;
+#[macro_use] extern crate serde_json;
 
-pub fn env_credentials() -> HashMap<String, String> {
+
+fn env_credentials() -> HashMap<String, String> {
     const USERNAME: &str = "SAUCE_USERNAME";
     const ACCESS_KEY: &str = "SAUCE_ACCESS_KEY";
     let sauce_username = match env::var(USERNAME) {
@@ -18,16 +21,39 @@ pub fn env_credentials() -> HashMap<String, String> {
     return creds;
 }
 
+fn all_jobs(build: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+    let creds = env_credentials();
+    let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build);
+    let resp: serde_json::Value  = reqwest::Client::new()
+    .get(&build_api)
+    .basic_auth(&creds["SAUCE_USERNAME"], Some(&creds["SAUCE_ACCESS_KEY"]))
+    .send()?
+    .json()?;
+
+    println!("This is the all_jobs(buildId) response headers: {:#?}", resp);
+    Ok(resp)
+}
+
+pub fn setup() {
+    env::set_var("SAUCE_USERNAME", "my.name");
+    env::set_var("SAUCE_ACCESS_KEY", "my.access.key");
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
     fn find_env_variables() {
-        use std::env;
-        env::set_var("SAUCE_USERNAME", "my.name");
-        env::set_var("SAUCE_ACCESS_KEY", "my.access.key");
-
+        crate::setup();
         assert_eq!(crate::env_credentials().len(), 2);
         assert!(crate::env_credentials().contains_key("SAUCE_USERNAME"));
         assert_eq!(crate::env_credentials()["SAUCE_USERNAME"], "my.name");
+    }
+
+    #[test]
+    fn all_jobs_present() {
+        match crate::all_jobs("91ee45d589ce4177981bf22f911f22c5") {
+            Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
+            Err(e) => assert_eq!(e.to_string(), ""),
+        }
     }
 }
