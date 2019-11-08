@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::env;
 extern crate reqwest;
-#[macro_use] extern crate serde_json;
+extern crate serde_json;
 
 
 fn env_credentials() -> HashMap<String, String> {
@@ -34,16 +34,16 @@ fn all_jobs(build: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>
     Ok(resp)
 }
 
-pub fn setup() {
-    env::set_var("SAUCE_USERNAME", "my.name");
-    env::set_var("SAUCE_ACCESS_KEY", "my.access.key");
+fn setup(user: &str, key: &str) {
+    env::set_var("SAUCE_USERNAME", user);
+    env::set_var("SAUCE_ACCESS_KEY", key);
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn find_env_variables() {
-        crate::setup();
+        crate::setup("my.name", "random123125152");
         assert_eq!(crate::env_credentials().len(), 2);
         assert!(crate::env_credentials().contains_key("SAUCE_USERNAME"));
         assert_eq!(crate::env_credentials()["SAUCE_USERNAME"], "my.name");
