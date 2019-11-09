@@ -59,16 +59,15 @@ pub fn all_jobs(
         println!("WE ARE HERE");
         let mut masked_key = String::new();
         let mut i = 0;
-        for c in creds.access_key.chars().rev() {
+        for c in creds.access_key.chars() {
             if i == 5 {
                 break;
             }
-            &masked_key.push(c);
+            masked_key.push(c);
             i += 1;
             println!("{}", c);
             println!(">>>>>>>>>>>>>>> {}", masked_key);
         }
-
         panic!(
             "Something went wrong with the request using user {}:******{} {}.  Response: {}",
             creds.username, masked_key, build_api, resp
@@ -95,7 +94,7 @@ mod tests {
         match crate::all_jobs(
             "91ee45d589ce4177981bf22f911f22c5",
             "wrong-user1234ab12vasf".to_string(),
-            "".to_string(),
+            "1285b128b519".to_string(),
         ) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
             Err(e) => assert_eq!(e.to_string(), ""),
