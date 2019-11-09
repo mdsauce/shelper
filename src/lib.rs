@@ -20,6 +20,9 @@ fn set_credentials(user: Option<String>, key: Option<String>) -> Credentials {
         Some(key) => key,
         None => return env_credentials(),
     };
+    if creds.access_key == "" || creds.username == "" {
+        return env_credentials();
+    }
     return creds;
 }
 
@@ -69,7 +72,7 @@ pub fn all_jobs(
             println!(">>>>>>>>>>>>>>> {}", masked_key);
         }
         panic!(
-            "Something went wrong with the request using user {}:******{} {}.  Response: {}",
+            "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
             creds.username, masked_key, build_api, resp
         )
     };
@@ -93,7 +96,7 @@ mod tests {
     fn all_jobs_present() {
         match crate::all_jobs(
             "91ee45d589ce4177981bf22f911f22c5",
-            "wrong-user1234ab12vasf".to_string(),
+            "my.user12b1581b".to_string(),
             "1285b128b519".to_string(),
         ) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
