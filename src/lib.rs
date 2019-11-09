@@ -93,11 +93,24 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn all_jobs_bad_input() {
+        match crate::all_jobs(
+            "91ee45d589ce4177981bf22f911f22c5",
+            "bad.user12b1581b".to_string(),
+            "1285-fake-b128b519".to_string(),
+        ) {
+            Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
+            Err(e) => assert_eq!(e.to_string(), ""),
+        }
+    }
+
+    #[test]
     fn all_jobs_present() {
         match crate::all_jobs(
             "91ee45d589ce4177981bf22f911f22c5",
-            "my.user12b1581b".to_string(),
-            "1285b128b519".to_string(),
+            "".to_string(),
+            "".to_string(),
         ) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
             Err(e) => assert_eq!(e.to_string(), ""),
