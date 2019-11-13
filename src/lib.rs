@@ -59,7 +59,7 @@ pub fn all_jobs(
     if resp["jobs"].is_array() {
         return Ok(resp);
     } else {
-        println!("WE ARE HERE");
+        // should be separate util func for masking output
         let mut masked_key = String::new();
         let mut i = 0;
         for c in creds.access_key.chars() {
@@ -68,8 +68,6 @@ pub fn all_jobs(
             }
             masked_key.push(c);
             i += 1;
-            println!("{}", c);
-            println!(">>>>>>>>>>>>>>> {}", masked_key);
         }
         panic!(
             "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
