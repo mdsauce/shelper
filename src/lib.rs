@@ -1,11 +1,35 @@
 use std::env;
+use std::fmt;
 extern crate reqwest;
 extern crate serde_json;
+use std::error::Error;
 
 pub struct Credentials {
     username: String,
     access_key: String,
 }
+
+#[derive(Debug)]
+struct NoJobs {
+    username: String,
+    mask_key: String,
+    url: String,
+    resp: serde_json::Value,
+}
+
+impl NoJobs {
+    fn new(username: &String, mask_key: &String, url: &String, resp: serde_json::Value) -> NoJobs {
+        NoJobs{username: username.to_string(), mask_key: mask_key.to_string(), url: url.to_string(), resp: resp}
+    }
+}
+
+impl fmt::Display for NoJobs {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f,"Something went wrong with the request using user {}:{}****** {}.  Response: {}",self.username, self.mask_key, self.url, self.resp)
+    }
+}
+
+impl Error for NoJobs {}
 
 fn set_credentials(user: Option<String>, key: Option<String>) -> Credentials {
     let mut creds: Credentials = Credentials {
@@ -48,7 +72,7 @@ pub fn all_jobs(
     build: &str,
     user: String,
     key: String,
-) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+) -> Result<serde_json::Value, Box<dyn Error>> {
     let creds = set_credentials(Some(user), Some(key));
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build);
     let resp: serde_json::Value = reqwest::Client::new()
@@ -69,10 +93,16 @@ pub fn all_jobs(
             masked_key.push(c);
             i += 1;
         }
-        panic!(
-            "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
-            creds.username, masked_key, build_api, resp
-        )
+        // panic!(
+        //     "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
+        //     creds.username, masked_key, build_api, resp
+        // );
+        
+        // println!(
+        //     "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
+        //     creds.username, masked_key, build_api, resp
+        // );
+        return Err(Box::new(NoJobs::new(&creds.username, &masked_key, &build_api, resp)))
     };
 }
 
