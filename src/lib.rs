@@ -71,15 +71,6 @@ pub fn all_jobs(
             masked_key.push(c);
             i += 1;
         }
-        // panic!(
-        //     "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
-        //     creds.username, masked_key, build_api, resp
-        // );
-
-        // println!(
-        //     "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
-        //     creds.username, masked_key, build_api, resp
-        // );
         return Err(Box::new(sauce_errors::build::NoJobs::new(
             &creds.username,
             &masked_key,
