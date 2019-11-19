@@ -5,12 +5,12 @@ extern crate serde_json;
 use std::error::Error;
 
 pub fn all_jobs(
-    build: String,
+    build_id: String,
     user: String,
     key: String,
 ) -> Result<serde_json::Value, Box<dyn Error>> {
     let creds = auth::set_credentials(Some(user), Some(key));
-    let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build);
+    let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build_id);
     let resp: serde_json::Value = reqwest::Client::new()
         .get(&build_api)
         .basic_auth(&creds.username, Some(&creds.access_key))
@@ -19,16 +19,7 @@ pub fn all_jobs(
     if resp["jobs"].is_array() {
         return Ok(resp);
     } else {
-        // should be separate util func for masking output
-        let mut masked_key = String::new();
-        let mut i = 0;
-        for c in creds.access_key.chars() {
-            if i == 5 {
-                break;
-            }
-            masked_key.push(c);
-            i += 1;
-        }
+        let masked_key = mask_key(creds.access_key);       
         return Err(Box::new(sauce_errors::build::NoJobs::new(
             &creds.username,
             &masked_key,
@@ -36,6 +27,19 @@ pub fn all_jobs(
             resp,
         )));
     };
+}
+
+fn mask_key(api_key: String) -> String {
+    let mut mask = String::new();
+    let mut i = 0;
+    for c in api_key.chars() {
+        if i == 5 {
+            break;
+        }
+        mask.push(c);
+        i += 1;
+    }
+    return mask;
 }
 
 
