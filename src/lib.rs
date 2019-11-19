@@ -80,7 +80,7 @@ pub fn all_jobs(
         //     "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
         //     creds.username, masked_key, build_api, resp
         // );
-        return Err(Box::new(sauce_errors::NoJobs::new(
+        return Err(Box::new(sauce_errors::build::NoJobs::new(
             &creds.username,
             &masked_key,
             &build_api,
