@@ -1,11 +1,11 @@
 use super::auth;
 use super::sauce_errors;
-use super::user;
+use super::users;
 extern crate reqwest;
 extern crate serde_json;
 use std::error::Error;
 
-pub fn jobs(build_id: String, user: user::User) -> Result<serde_json::Value, Box<dyn Error>> {
+pub fn jobs(build_id: String, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build_id);
     let resp: serde_json::Value = reqwest::Client::new()
         .get(&build_api)
@@ -30,7 +30,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn all_jobs_bad_input() {
-        let fake_user = super::user::User::new(
+        let fake_user = super::users::User::new(
             "bad.user12b1581b".to_string(),
             "1285-fake-b128b519".to_string(),
             None,
@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn all_jobs_present() {
-        let real_user = super::user::User::new("".to_string(), "".to_string(), None);
+        let real_user = super::users::User::new("".to_string(), "".to_string(), None);
         match super::jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 30),
             Err(e) => assert_eq!(e.to_string(), ""),
