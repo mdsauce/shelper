@@ -1,5 +1,5 @@
 [package]
-name = "build_metadata"
+name = "sauce_help"
 version = "0.1.0"
 authors = ["mdsauce <max.dobeck@saucelabs.com>"]
 edition = "2018"
