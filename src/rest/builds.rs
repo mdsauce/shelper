@@ -19,7 +19,7 @@ pub fn all_jobs(
     if resp["jobs"].is_array() {
         return Ok(resp);
     } else {
-        let masked_key = mask_key(creds.access_key);       
+        let masked_key = auth::mask_key(creds.access_key);       
         return Err(Box::new(sauce_errors::build::NoJobs::new(
             &creds.username,
             &masked_key,
@@ -28,21 +28,6 @@ pub fn all_jobs(
         )));
     };
 }
-
-fn mask_key(api_key: String) -> String {
-    let mut mask = String::new();
-    let mut i = 0;
-    for c in api_key.chars() {
-        if i == 5 {
-            break;
-        }
-        mask.push(c);
-        i += 1;
-    }
-    return mask;
-}
-
-
 
 #[cfg(test)]
 mod tests {

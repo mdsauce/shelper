@@ -42,6 +42,19 @@ fn env_credentials() -> Credentials {
     return creds;
 }
 
+pub fn mask_key(api_key: String) -> String {
+    let mut mask = String::new();
+    let mut i = 0;
+    for c in api_key.chars() {
+        if i == 5 {
+            break;
+        }
+        mask.push(c);
+        i += 1;
+    }
+    return mask;
+}
+
 #[cfg(test)]
 fn setup(user: &str, key: &str) {
     env::set_var("SAUCE_USERNAME", user);
