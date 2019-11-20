@@ -30,11 +30,11 @@ mod tests {
     #[test]
     #[should_panic]
     fn all_jobs_bad_input() {
-        let creds = super::auth::set_credentials(
-            Some("bad.user12b1581b".to_string()),
-            Some("1285-fake-b128b519".to_string()),
+        let fake_user = super::user::User::new(
+            "bad.user12b1581b".to_string(),
+            "1285-fake-b128b519".to_string(),
+            None,
         );
-        let fake_user = super::user::User::new(creds, None);
         match super::jobs("91ee45d589ce4177981bf22f911f22c5".to_string(), fake_user) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
             Err(e) => assert_eq!(e.to_string(), ""),
@@ -43,8 +43,7 @@ mod tests {
 
     #[test]
     fn all_jobs_present() {
-        let creds = super::auth::set_credentials(Some("".to_string()), Some("".to_string()));
-        let real_user = super::user::User::new(creds, None);
+        let real_user = super::user::User::new("".to_string(), "".to_string(), None);
         match super::jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 30),
             Err(e) => assert_eq!(e.to_string(), ""),
