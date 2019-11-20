@@ -1,4 +1,4 @@
-use::std::env;
+use ::std::env;
 
 pub struct Credentials {
     pub username: String,
