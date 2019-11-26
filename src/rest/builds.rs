@@ -67,7 +67,7 @@ mod tests {
     #[test]
     fn build_data_retrievable() {
         let real_user = super::users::User::new("".to_string(), "".to_string(), None);
-        let resp = match super::build_data("91ee45d589ce4177981bf22f911f22c5", real_user) {
+        let resp = match super::build("91ee45d589ce4177981bf22f911f22c5", real_user) {
             Ok(resp) => assert_eq!(resp["jobs"]["finished"], 32),
             Err(e) => assert_eq!(e.to_string(), ""),
         };
