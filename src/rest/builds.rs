@@ -27,6 +27,18 @@ pub fn jobs(build_id: String, user: users::User) -> Result<serde_json::Value, Bo
     };
 }
 
+/// Get JSON data about a specific build.
+/// Requires Build Id and authentication
+pub fn build_data(build_id: &str, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
+    let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}", build_id);
+    let resp: serde_json::Value = reqwest::Client::new()
+        .get(&build_api)
+        .basic_auth(&user.creds.username, Some(&user.creds.access_key))
+        .send()?
+        .json()?;
+    return Ok(resp);
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -50,5 +62,15 @@ mod tests {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 30),
             Err(e) => assert_eq!(e.to_string(), ""),
         }
+    }
+
+    #[test]
+    fn build_data_retrievable() {
+        let real_user = super::users::User::new("".to_string(), "".to_string(), None);
+        let resp = match super::build_data("91ee45d589ce4177981bf22f911f22c5", real_user) {
+            Ok(resp) => assert_eq!(resp["jobs"]["finished"], 32),
+            Err(e) => assert_eq!(e.to_string(), ""),
+        };
+        println!("Build 91ee45d589ce4177981bf22f911f22c5 has data ---------> {:?}", resp);
     }
 }
