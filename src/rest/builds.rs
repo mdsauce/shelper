@@ -5,6 +5,8 @@ extern crate reqwest;
 extern crate serde_json;
 use std::error::Error;
 
+/// Gets all jobs in a build.
+/// Needs the `Build Id` and `Owner` of a build and returns a json array of all `jobs` and `job` data.
 pub fn jobs(build_id: String, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build_id);
     let resp: serde_json::Value = reqwest::Client::new()

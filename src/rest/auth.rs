@@ -1,10 +1,13 @@
-use ::std::env;
+use std::env;
 
+/// SAUCE_USERNAME:SAUCE_ACCESS_KEY for a user used for authentication.
 pub struct Credentials {
     pub username: String,
     pub access_key: String,
 }
 
+/// defaults to using SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables.
+/// Can be overwritten with custom credentials.
 pub fn set_credentials(user: Option<String>, key: Option<String>) -> Credentials {
     let mut creds: Credentials = Credentials {
         username: "default".to_string(),
@@ -24,6 +27,7 @@ pub fn set_credentials(user: Option<String>, key: Option<String>) -> Credentials
     return creds;
 }
 
+/// gets the env variables most commonly used.
 fn env_credentials() -> Credentials {
     const USERNAME: &str = "SAUCE_USERNAME";
     const ACCESS_KEY: &str = "SAUCE_ACCESS_KEY";
@@ -42,6 +46,7 @@ fn env_credentials() -> Credentials {
     return creds;
 }
 
+/// mask the API Key used by users prior to outputting it.
 pub fn mask_key(api_key: String) -> String {
     let mut mask = String::new();
     let mut i = 0;
