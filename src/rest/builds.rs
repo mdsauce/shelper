@@ -136,7 +136,7 @@ mod tests {
             Ok(b) => b,
             Err(e) => panic!("{}", e),
         };
-        println!("my build name is ----->{:?}", mybuild.name);
+        println!("my build ----->{:?}", mybuild);
         assert_eq!(mybuild.name, Some("generic build: grey Small Fresh Computer 6.0.4".to_string()))
     }
 }
