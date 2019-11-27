@@ -8,37 +8,37 @@ use std::error::Error;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Build {
-    status: String,
-    name: Option<String>,
-    deletion_time: Option<String>,
-    jobs: Jobs,
-    org_id: String,
-    start_time: u64,
-    creation_time: u64,
-    modification_time: u64,
-    end_time: u64,
-    number: Option<String>,
-    public: bool,
-    prefix: Option<String>,
-    passed: bool,
-    owner: String,
-    run: Option<i64>,
-    team_id: String,
-    group_id: Option<String>,
-    id: String,
+    pub status: String,
+    pub name: Option<String>,
+    pub deletion_time: Option<String>,
+    pub jobs: Jobs,
+    pub org_id: String,
+    pub start_time: u64,
+    pub creation_time: u64,
+    pub modification_time: u64,
+    pub end_time: u64,
+    pub number: Option<String>,
+    pub public: bool,
+    pub prefix: Option<String>,
+    pub passed: bool,
+    pub owner: String,
+    pub run: Option<i64>,
+    pub team_id: String,
+    pub group_id: Option<String>,
+    pub id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 /// Jobs object inside a Build contains a count of different job statuses
 pub struct Jobs {
-    completed: i64,
-    finished: i64,
-    queued: i64,
-    failed: i64,
-    running: i64,
-    passed: i64,
-    errored: i64,
-    public: i64,
+    pub completed: i64,
+    pub finished: i64,
+    pub queued: i64,
+    pub failed: i64,
+    pub running: i64,
+    pub passed: i64,
+    pub errored: i64,
+    pub public: i64,
 }
 
 impl Build {
