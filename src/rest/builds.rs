@@ -31,14 +31,14 @@ pub struct Build {
 #[derive(Serialize, Deserialize, Debug)]
 /// Jobs object inside a Build contains a count of different job statuses
 pub struct Jobs {
-    pub completed: i64,
-    pub finished: i64,
-    pub queued: i64,
-    pub failed: i64,
-    pub running: i64,
-    pub passed: i64,
-    pub errored: i64,
-    pub public: i64,
+    pub completed: i32,
+    pub finished: i32,
+    pub queued: i32,
+    pub failed: i32,
+    pub running: i32,
+    pub passed: i32,
+    pub errored: i32,
+    pub public: i32,
 }
 
 impl Build {
@@ -51,10 +51,7 @@ impl Build {
 
 /// Gets a JSON array all jobs in a build.
 /// Needs the `Build Id` and `Owner` of a build and returns a json array of all `jobs` and `job` data.
-pub fn build_jobs(
-    build_id: String,
-    user: users::User,
-) -> Result<serde_json::Value, Box<dyn Error>> {
+pub fn all_jobs(build_id: String, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build_id);
     let resp: serde_json::Value = reqwest::Client::new()
         .get(&build_api)
@@ -101,7 +98,7 @@ mod tests {
             "1285-fake-b128b519".to_string(),
             None,
         );
-        match super::build_jobs("91ee45d589ce4177981bf22f911f22c5".to_string(), fake_user) {
+        match super::all_jobs("91ee45d589ce4177981bf22f911f22c5".to_string(), fake_user) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
             Err(e) => assert_eq!(e.to_string(), ""),
         }
@@ -110,7 +107,7 @@ mod tests {
     #[test]
     fn all_jobs_present() {
         let real_user = super::users::User::new("".to_string(), "".to_string(), None);
-        match super::build_jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
+        match super::all_jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 30),
             Err(e) => assert_eq!(e.to_string(), ""),
         }
@@ -132,11 +129,14 @@ mod tests {
     #[test]
     fn create_new_build_object() {
         let real_user = super::users::User::new("".to_string(), "".to_string(), None);
-        let mybuild =  match super::Build::new("91ee45d589ce4177981bf22f911f22c5", real_user) {
+        let mybuild = match super::Build::new("91ee45d589ce4177981bf22f911f22c5", real_user) {
             Ok(b) => b,
             Err(e) => panic!("{}", e),
         };
         println!("my build ----->{:?}", mybuild);
-        assert_eq!(mybuild.name, Some("generic build: grey Small Fresh Computer 6.0.4".to_string()))
+        assert_eq!(
+            mybuild.name,
+            Some("generic build: grey Small Fresh Computer 6.0.4".to_string())
+        )
     }
 }
