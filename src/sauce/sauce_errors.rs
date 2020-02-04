@@ -5,7 +5,7 @@ pub mod build {
     #[derive(Debug)]
     pub struct NoJobs {
         username: String,
-        mask_key: String,
+        masked_key: String,
         url: String,
         resp: serde_json::Value,
     }
@@ -13,13 +13,13 @@ pub mod build {
     impl NoJobs {
         pub fn new(
             username: &String,
-            mask_key: &String,
+            masked_key: &String,
             url: &String,
             resp: serde_json::Value,
         ) -> NoJobs {
             NoJobs {
                 username: username.to_string(),
-                mask_key: mask_key.to_string(),
+                masked_key: masked_key.to_string(),
                 url: url.to_string(),
                 resp: resp,
             }
@@ -31,7 +31,7 @@ pub mod build {
             write!(
                 f,
                 "Something went wrong with the request using user {}:{}****** {}.  Response: {}",
-                self.username, self.mask_key, self.url, self.resp
+                self.username, self.masked_key, self.url, self.resp
             )
         }
     }
