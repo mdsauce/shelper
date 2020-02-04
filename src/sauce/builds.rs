@@ -107,19 +107,22 @@ mod tests {
     #[test]
     fn all_jobs_present() {
         let real_user = super::users::User::new("".to_string(), "".to_string(), None);
-        match super::all_jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
-            Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 30),
-            Err(e) => assert_eq!(e.to_string(), ""),
-        }
+        let resp = match super::all_jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
+            Ok(resp) => resp,
+            Err(e) => panic!("{}", e),
+        };
+        assert_eq!(resp["jobs"].as_array().unwrap().len(), 30);
+        // println!("{:?}", resp);
     }
 
     #[test]
-    fn build_data_retrievable() {
+    fn get_build_data() {
         let real_user = super::users::User::new("".to_string(), "".to_string(), None);
         let resp = match super::build_info("91ee45d589ce4177981bf22f911f22c5", real_user) {
-            Ok(resp) => assert_eq!(resp["jobs"]["finished"], 32),
-            Err(e) => assert_eq!(e.to_string(), ""),
+            Ok(resp) => resp,
+            Err(e) => panic!("{}", e),
         };
+        assert_eq!(resp["jobs"]["finished"], 32);
         println!(
             "Build 91ee45d589ce4177981bf22f911f22c5 has data ---------> {:?}",
             resp
