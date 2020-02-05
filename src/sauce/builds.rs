@@ -71,7 +71,7 @@ pub fn all_jobs(build_id: String, user: users::User) -> Result<serde_json::Value
     };
 }
 
-/// Requires Build Id and User object.
+/// Requires Build Id and User object to fetch build details and all jobs.
 /// Returns an error or a JSON object about a specific build.
 ///
 /// Example return:
