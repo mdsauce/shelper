@@ -1,8 +1,6 @@
 use super::auth;
 use super::sauce_errors;
 use super::users;
-extern crate reqwest;
-extern crate serde_json;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -29,7 +27,7 @@ pub struct Build {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// Jobs object inside a Build contains a count of different job statuses
+/// All the jobs in a build
 pub struct Jobs {
     pub completed: i32,
     pub finished: i32,
@@ -49,8 +47,6 @@ impl Build {
     }
 }
 
-/// Gets a JSON array all jobs in a build.
-/// Needs the `Build Id` and `Owner` of a build and returns a json array of all `jobs` and `job` data.
 pub fn all_jobs(build_id: String, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build_id);
     let resp: serde_json::Value = reqwest::Client::new()
@@ -71,13 +67,6 @@ pub fn all_jobs(build_id: String, user: users::User) -> Result<serde_json::Value
     };
 }
 
-/// Requires Build Id and User object to fetch build details and all jobs.
-/// Returns an error or a JSON object about a specific build.
-///
-/// Example return:
-/// ```json
-/// {"status": "success", "jobs": {"completed": 0, "finished": 32, "queued": 0, "failed": 0, "running": 0, "passed": 32, "errored": 0, "public": 0}, "name": "generic build: grey Small Fresh Computer 6.0.4", "deletion_time": null, "org_id": "695f050ceec84e6e99c5288982eed1b1", "start_time": 1573166295, "creation_time": 1573166306, "number": null, "public": false, "modification_time": 1573166370, "prefix": null, "end_time": 1573166338, "passed": true, "owner": "max.dobeck", "run": 0, "team_id": "28fed5500a474c03a06b928d8efed1e7", "group_id": null, "id": "91ee45d589ce4177981bf22f911f22c5"}
-/// ```
 pub fn build_info(build_id: &str, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}", build_id);
     let resp: serde_json::Value = reqwest::Client::new()
@@ -102,17 +91,6 @@ mod tests {
             Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
             Err(e) => assert_eq!(e.to_string(), ""),
         }
-    }
-
-    #[test]
-    fn all_jobs_present() {
-        let real_user = super::users::User::new("".to_string(), "".to_string(), None);
-        let resp = match super::all_jobs("6fe18c6e08a14d1782a9b9eb322269c1".to_string(), real_user) {
-            Ok(resp) => resp,
-            Err(e) => panic!("{}", e),
-        };
-        assert_eq!(resp["jobs"].as_array().unwrap().len(), 30);
-        // println!("{:?}", resp);
     }
 
     #[test]
