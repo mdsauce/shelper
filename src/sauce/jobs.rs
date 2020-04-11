@@ -337,10 +337,9 @@ fn json_serializes_to_bulk_full_jobs() {
 
 #[test]
 fn create_bulk_full_jobs_obj() {
-    let real_user_env_vars = super::users::User::new("".to_string(), "".to_string(), None);
-
+    let real_user = super::users::User::new("".to_string(), "".to_string(), None);
     let latest_jobs: BulkFullJobs =
-        super::jobs::BulkFullJobs::new(&real_user_env_vars, Some(&real_user_env_vars), 5).unwrap();
+        super::jobs::BulkFullJobs::new(&real_user, Some(&real_user), 5).unwrap();
     assert_eq!(latest_jobs.jobs.len(), 5);
-    assert_eq!(latest_jobs.jobs[0].owner, real_user_env_vars.creds.username);
+    assert_eq!(latest_jobs.jobs[0].owner, real_user.creds.username);
 }

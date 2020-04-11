@@ -1,7 +1,7 @@
 use super::auth;
 
-/// Represents a User within Sauce's Virtual Desktop and Device Cloud at saucelabs.com.
-/// Someone with a Sauce Labs Username and API Access Key.
+/// Represents a `User` at saucelabs.com. Contains the Credentials username:access_key
+/// Contains the Region they're in within the context of Sauce data centers
 pub struct User {
     pub creds: auth::Credentials,
     pub region: Region,
