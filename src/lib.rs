@@ -1,4 +1,17 @@
-/// All REST API activites for saucelabs.com.  Limited to saucelabs.com APIs at the time of this writing.
-/// Not all APIs are guaranteed to be publicly listed or continue functioning.
-/// Emulator, Simulator, and Desktop test data should be accessible.
-pub mod sauce;
+extern crate reqwest;
+extern crate serde_json;
+
+/// API calls
+pub mod api;
+/// REST API wrapper for sauce labs.  Gets data about tests.
+
+/// Authenticating a user or dealing with credentials for saucelabs.com REST API
+pub mod auth;
+/// API related to builds or build metadata
+pub mod builds;
+/// API related to individual Jobs (test sessions)
+pub mod jobs;
+/// Custom error messages thrown when encountering problems accessing the Sauce REST API
+pub mod sauce_errors;
+/// User data and Sauce REST API routes
+pub mod users;

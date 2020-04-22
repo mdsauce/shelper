@@ -15,8 +15,12 @@ pub enum Region {
 }
 
 impl User {
-    pub fn new(username: String, access_key: String, region: Option<Region>) -> User {
-        let creds = auth::set_credentials(Some(username), Some(access_key));
+    pub fn new(
+        username: Option<String>,
+        access_key: Option<String>,
+        region: Option<Region>,
+    ) -> User {
+        let creds = auth::set_credentials(username, access_key);
         match region {
             Some(region) => User {
                 creds: creds,

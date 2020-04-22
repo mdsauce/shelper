@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 
 #[derive(Serialize, Deserialize, Debug)]
-/// Bulk jobs recently run by a user
+/// Gets large batches of recently run jobs for a user.  Data
+/// is in FULL mode and should be close to the /jobs API output
 pub struct BulkFullJobs {
     pub jobs: Vec<JobDetails>,
 }
@@ -42,9 +43,12 @@ impl JobDetails {
         owner: &users::User,
         super_admin: Option<&users::User>,
     ) -> Result<JobDetails, Box<dyn Error>> {
-        let api_resp = match super::jobs::job_info(&owner, &job_id, super_admin) {
+        let api_resp = match super::api::job_info(&owner, &job_id, super_admin) {
             Ok(body) => body,
-            Err(e) => panic!("Problem getting the Job via API: {}", e),
+            Err(e) => {
+                // eprintln!("Problem getting the Job via API: {}", e);
+                return Err(format!("Problem getting the Job via API: {}", e))?;
+            }
         };
         let job_json: serde_json::Value = serde_json::from_str(&api_resp).unwrap();
         let job: JobDetails = match serde_json::from_value(job_json) {
@@ -56,14 +60,14 @@ impl JobDetails {
 }
 
 impl BulkFullJobs {
-    /// create new `BulkFullJobs` struct consisting of a users
-    /// recent jobs with the FULL API setting so all details are returned
+    /// create new `BulkFullJobs` object consisting of a user's
+    /// recent jobs. FULL API setting is enabled so more details are returned
     pub fn new(
         owner: &users::User,
         super_admin: Option<&users::User>,
         limit: u64,
     ) -> Result<BulkFullJobs, Box<dyn Error>> {
-        let api = match super::jobs::recent_user_jobs(owner, super_admin, limit) {
+        let api = match super::api::recent_user_jobs(owner, super_admin, limit) {
             Ok(body) => body,
             Err(e) => panic!(
                 "Problem getting jobs from {}/jobs API: {}",
@@ -73,57 +77,6 @@ impl BulkFullJobs {
         let jobs: Vec<JobDetails> = serde_json::from_str(&api).unwrap();
         return Ok(BulkFullJobs { jobs: jobs });
     }
-}
-
-/// Returns the JSON info for a Job. `job_info` makes a REST call
-/// with given credentials to fetch the details of a single job.
-pub fn job_info(
-    owner: &users::User,
-    job_id: &str,
-    super_admin: Option<&users::User>,
-) -> Result<String, Box<dyn Error>> {
-    let auth: &users::User = match super_admin {
-        Some(admin) => admin,
-        None => owner,
-    };
-    let job_info_api = format!(
-        "https://saucelabs.com/rest/v1/{}/jobs/{}",
-        owner.creds.username, job_id
-    );
-    let text_resp = reqwest::Client::new()
-        .get(&job_info_api)
-        .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
-        .send()?
-        .text()?;
-    return Ok(text_resp);
-}
-
-/// Get latest jobs for a user, limit of 500 at a time
-pub fn recent_user_jobs(
-    owner: &users::User,
-    super_admin: Option<&users::User>,
-    limit: u64,
-) -> Result<String, Box<dyn Error>> {
-    if limit > 500 {
-        Err(format!(
-            "{} is too many jobs.  Limit is 500 for /user/jobs API. See Sauce Labs API docs",
-            limit
-        ))?;
-    }
-    let auth: &users::User = match super_admin {
-        Some(admin) => admin,
-        None => owner,
-    };
-    let job_info_api = format!(
-        "https://saucelabs.com/rest/v1/{}/jobs?limit={}&full=true",
-        owner.creds.username, limit
-    );
-    let text_resp = reqwest::Client::new()
-        .get(&job_info_api)
-        .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
-        .send()?
-        .text()?;
-    return Ok(text_resp);
 }
 
 #[test]
@@ -162,14 +115,14 @@ fn json_serializes_job_details_obj() {
         "browser": "android"
       }"#;
     let job_json: serde_json::Value = serde_json::from_str(&job_text).unwrap();
-    println!("Job has data: {:?}", job_json);
     assert_eq!(job_json["id"], "30b9be879aa84313800c987b7aa325e8");
 }
 
 #[test]
 fn get_job_info_produces_jobdetails() {
-    let real_user_env_vars = super::users::User::new("".to_string(), "".to_string(), None);
-    let job_text = match super::jobs::job_info(
+    let real_user_env_vars =
+        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let job_text = match super::api::job_info(
         &real_user_env_vars,
         "30b9be879aa84313800c987b7aa325e8",
         None,
@@ -189,7 +142,8 @@ fn get_job_info_produces_jobdetails() {
 
 #[test]
 fn job_object_constructed() {
-    let real_user_env_vars = super::users::User::new("".to_string(), "".to_string(), None);
+    let real_user_env_vars =
+        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
 
     let job: JobDetails = super::jobs::JobDetails::new(
         "30b9be879aa84313800c987b7aa325e8",
@@ -203,7 +157,8 @@ fn job_object_constructed() {
 
 #[test]
 fn job_object_constructed_wo_admin() {
-    let real_user_env_vars = super::users::User::new("".to_string(), "".to_string(), None);
+    let real_user_env_vars =
+        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
 
     let job: JobDetails = super::jobs::JobDetails::new(
         "30b9be879aa84313800c987b7aa325e8",
@@ -213,40 +168,6 @@ fn job_object_constructed_wo_admin() {
     .unwrap();
     assert_eq!(job.id, "30b9be879aa84313800c987b7aa325e8");
     assert_eq!(job.name, Some("Simple Android EMUSIM Test".to_string()));
-}
-
-#[test]
-/// use the recent_user_jobs api call and confirm
-/// we only get the requested number of jobs as raw json
-fn json_user_last_3_jobs() {
-    let real_user_env_vars = super::users::User::new("".to_string(), "".to_string(), None);
-
-    let jobs_json = super::jobs::recent_user_jobs(&real_user_env_vars, None, 3).unwrap();
-
-    let last_3_jobs: serde_json::Value = serde_json::from_str(&jobs_json).unwrap();
-    println!(
-        "{}\nLength of jobs_json: {}",
-        last_3_jobs,
-        last_3_jobs.as_array().unwrap().len()
-    );
-    assert_eq!(last_3_jobs.as_array().unwrap().len(), 3);
-}
-
-#[test]
-fn over_500_limit() {
-    let real_user_env_vars = super::users::User::new("".to_string(), "".to_string(), None);
-
-    // let _jobs_json = super::jobs::recent_user_jobs(&real_user_env_vars, None, 505).unwrap();
-    match super::jobs::recent_user_jobs(&real_user_env_vars, None, 505) {
-        Ok(_) => println!("Shouldn't be here"),
-        Err(e) => {
-            println!("{:?}", e);
-            assert_eq!(
-                "505 is too many jobs.  Limit is 500 for /user/jobs API. See Sauce Labs API docs",
-                e.to_string()
-            )
-        }
-    }
 }
 
 #[test]
@@ -337,7 +258,7 @@ fn json_serializes_to_bulk_full_jobs() {
 
 #[test]
 fn create_bulk_full_jobs_obj() {
-    let real_user = super::users::User::new("".to_string(), "".to_string(), None);
+    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
     let latest_jobs: BulkFullJobs =
         super::jobs::BulkFullJobs::new(&real_user, Some(&real_user), 5).unwrap();
     assert_eq!(latest_jobs.jobs.len(), 5);

@@ -1,5 +1,5 @@
 [package]
-name = "sauce_help"
+name = "shelper"
 version = "0.1.0"
 authors = ["mdsauce <max.dobeck@saucelabs.com>"]
 edition = "2018"
@@ -10,3 +10,4 @@ edition = "2018"
 serde = "1.0.102"
 reqwest = "0.9.22"
 serde_json = "1.0.41"
+clap = "2.33.0"
