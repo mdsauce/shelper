@@ -27,12 +27,11 @@ pub fn job_info(
         }
     }
 
-    let client = reqwest::Client::new();
-    let mut resp = client
+    let client = reqwest::blocking::Client::new();
+    let resp = client
         .get(&job_info_api)
         .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
         .send()?;
-    let resp_body = resp.text()?;
     if !resp.status().is_success() {
         return Err(format!(
             "{} response during GET req to {}",
@@ -40,7 +39,7 @@ pub fn job_info(
             job_info_api
         ))?;
     }
-    return Ok(resp_body);
+    return Ok(resp.text()?);
 }
 
 /// Get latest jobs for a user, limit of 500 at a time.  Returns
@@ -64,7 +63,8 @@ pub fn recent_user_jobs(
         "https://saucelabs.com/rest/v1/{}/jobs?limit={}&full=true",
         owner.creds.username, limit
     );
-    let text_resp = reqwest::Client::new()
+
+    let text_resp = reqwest::blocking::Client::new()
         .get(&job_info_api)
         .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
         .send()?
@@ -76,7 +76,7 @@ pub fn recent_user_jobs(
 /// to fetch the job details for each job in the build.
 pub fn all_jobs(build_id: String, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}/jobs", build_id);
-    let resp: serde_json::Value = reqwest::Client::new()
+    let resp: serde_json::Value = reqwest::blocking::Client::new()
         .get(&build_api)
         .basic_auth(&user.creds.username, Some(&user.creds.access_key))
         .send()?
@@ -98,7 +98,7 @@ pub fn all_jobs(build_id: String, user: users::User) -> Result<serde_json::Value
 /// all the build meta data as a json object
 pub fn build_info(build_id: &str, user: users::User) -> Result<serde_json::Value, Box<dyn Error>> {
     let build_api = format!("https://app.saucelabs.com/rest/v1/builds/{}", build_id);
-    let resp: serde_json::Value = reqwest::Client::new()
+    let resp: serde_json::Value = reqwest::blocking::Client::new()
         .get(&build_api)
         .basic_auth(&user.creds.username, Some(&user.creds.access_key))
         .send()?
