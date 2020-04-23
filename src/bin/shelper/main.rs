@@ -4,6 +4,7 @@ extern crate shelper;
 use clap::{App, Arg};
 use shelper::jobs;
 use shelper::users;
+mod input_stripper;
 
 fn main() {
     let cmds = App::new("shelper")
@@ -79,6 +80,7 @@ fn main() {
     }
 
     if let Some(jobs) = cmds.values_of("job") {
+        // let sanitized_jobs = ;
         let job_count = jobs.len();
         for (i, job) in jobs.enumerate() {
             let deets: shelper::jobs::JobDetails;

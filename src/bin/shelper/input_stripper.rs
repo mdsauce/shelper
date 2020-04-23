@@ -9,7 +9,7 @@ pub fn get_session_id(user_arg: &str) -> Result<String, String> {
     Ok(split_url[2].to_string().clone())
 }
 
-pub fn sanitize_jobs(jobs: Vec<&str>) -> Vec<String> {
+pub fn get_job_id(jobs: Vec<&str>) -> Vec<String> {
     let mut job_ids: Vec<String> = Vec::new();
     for job in jobs {
         match get_session_id(job) {
@@ -42,13 +42,15 @@ fn jobs_get_sanitized() {
         "https://app.saucelabs.com/tests/d73e717d7fcd46cd9927f369ba64fc28#7",
         "https://app.saucelabs.com/tests/68d86d4795fa4efbbc628def8452866e",
         "https://app.saucelabs.com/tests/13a1e7e67bd841b0baf20c55317adb12",
+        "app.saucelabs.com/tests/13a1e7e67bd841b0baf20c55317adb12"
     ];
-    println!("{:?}", sanitize_jobs(j.clone()));
+    println!("{:?}", get_job_id(j.clone()));
     assert_eq!(
-        sanitize_jobs(j),
+        get_job_id(j),
         [
             "d73e717d7fcd46cd9927f369ba64fc28",
             "68d86d4795fa4efbbc628def8452866e",
+            "13a1e7e67bd841b0baf20c55317adb12",
             "13a1e7e67bd841b0baf20c55317adb12"
         ]
     )
