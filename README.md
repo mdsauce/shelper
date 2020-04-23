@@ -2,7 +2,7 @@
 Rust CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  A Job right now is: Virtual Desktop, iOS Simulator, & Android Emulator tests.
 
 ## Installation
-Maybe use cargo?  Unsure
+Maybe host it with crates.io?  Unsure. 
 
 Right now best thing is:
 1. Git clone
