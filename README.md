@@ -12,7 +12,10 @@ Right now best thing is:
 ## Usage
 `shelper -h` or `shelper --help`
 
-`shelper -j some_session_id -j some_session_id` or `shelper -j some_session_id some_session_id some_session_id` are both valid.
+#### Examples
+`shelper -j 129571b50 -j 15b150b5` 
+
+`shelper -j 195b150b5 159nb15915 1595n159`
 
 ## Development
 `cargo doc --open`: compile and run the documentation
