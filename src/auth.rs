@@ -1,6 +1,7 @@
 use std::env;
 
 /// SAUCE_USERNAME:SAUCE_ACCESS_KEY for a user used for authentication.
+#[derive(Debug)]
 pub struct Credentials {
     pub username: String,
     pub access_key: String,

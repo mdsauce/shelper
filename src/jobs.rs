@@ -26,13 +26,15 @@ pub struct JobDetails {
     pub log_url: String,
     pub creation_time: u64,
     pub owner: String,
-    pub passed: bool,
+    pub passed: Option<bool>,
     pub selenium_version: Option<String>,
     pub public: String,
     pub status: String,
     pub assigned_tunnel_id: Option<String>,
     pub automation_backend: String,
     pub error: Option<String>,
+    #[serde(skip)]
+    pub region: users::Region,
 }
 
 impl JobDetails {
@@ -51,11 +53,64 @@ impl JobDetails {
             }
         };
         let job_json: serde_json::Value = serde_json::from_str(&api_resp).unwrap();
-        let job: JobDetails = match serde_json::from_value(job_json) {
+        let mut job: JobDetails = match serde_json::from_value(job_json) {
             Ok(job) => job,
             Err(e) => panic!("{}\n{:?}", e, api_resp),
         };
+        match owner.region {
+            users::Region::EU => job.region = users::Region::EU,
+            _ => (),
+        }
         return Ok(job);
+    }
+
+    /// `pretty_print` prints the details to stdout. An artisanal method
+    /// to print the test details in the most beautiful way possible
+    pub fn pretty_print(&self) {
+        match &self.name {
+            Some(name) => println!("Test Name: {}", name),
+            None => (),
+        }
+        match &self.passed {
+            Some(true) => println!("User marked as PASSED"),
+            Some(false) => println!("User marked as FAILED"),
+            None => (),
+        }
+        match &self.build {
+            Some(build) => println!("Build Name: {}", build),
+            None => (),
+        }
+        println!("Owner: {}", self.owner);
+        println!(
+            "Platform: {} {} {}",
+            self.os, self.browser, self.browser_version
+        );
+        match &self.error {
+            Some(err) => println!("{}", err),
+            None => (),
+        }
+        println!("Session id: {}", self.id);
+        match &self.assigned_tunnel_id {
+            Some(tunnel_id) => println!("Tunnel id: {}", tunnel_id),
+            None => (),
+        }
+        match &self.selenium_version {
+            Some(ver) => println!("Selenium Version {}", ver),
+            None => (),
+        }
+        println!("Automation Backend: {}", self.automation_backend);
+        match &self.manual {
+            Some(live_test) => println!("Live Test (manual): {}", live_test),
+            None => (),
+        }
+        println!("Test Status: {}", self.status);
+        match self.region {
+            users::Region::US => println!("Link: https://app.saucelabs.com/tests/{}", self.id),
+            users::Region::EU => println!(
+                "Link: https://app.eu-central-1.saucelabs.com/tests/{}",
+                self.id
+            ),
+        }
     }
 }
 
@@ -74,7 +129,12 @@ impl BulkFullJobs {
                 owner.creds.username, e
             ),
         };
-        let jobs: Vec<JobDetails> = serde_json::from_str(&api).unwrap();
+        let mut jobs: Vec<JobDetails> = serde_json::from_str(&api).unwrap();
+        if owner.region == users::Region::EU {
+            for job in jobs.iter_mut() {
+                job.region = users::Region::EU
+            }
+        }
         return Ok(BulkFullJobs { jobs: jobs });
     }
 }

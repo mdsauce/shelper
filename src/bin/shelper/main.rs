@@ -2,6 +2,7 @@
 extern crate clap;
 extern crate shelper;
 use clap::{App, Arg};
+use shelper::jobs;
 use shelper::users;
 
 fn main() {
@@ -40,6 +41,15 @@ fn main() {
                 .takes_value(true)
                 .multiple(false),
         )
+        .arg(
+            Arg::with_name("region")
+                .help("Region/datacenter to search.")
+                .short("r")
+                .long("region")
+                .takes_value(true)
+                .possible_value("EU")
+                .possible_value("US"),
+        )
         .get_matches();
 
     if cmds.is_present("version") {
@@ -52,20 +62,33 @@ fn main() {
     }
 
     let owner_arg = cmds.value_of("owner").unwrap().to_string();
+
+    let region = match cmds.is_present("region") {
+        true => value_t!(cmds, "region", users::Region).unwrap_or_else(|e| e.exit()),
+        false => users::Region::US,
+    };
+
     let owner: users::User;
     if cmds.is_present("access_key") {
         let key_arg = cmds.value_of("access_key").unwrap().to_string();
-        owner = users::User::new(Some(owner_arg), Some(key_arg), None);
+        match region {
+            users::Region::US => owner = users::User::new(Some(owner_arg), Some(key_arg), None),
+            users::Region::EU => owner = users::User::new(Some(owner_arg), Some(key_arg), Some(users::Region::EU)),
+        }
     } else {
-        owner = users::User::new(Some(owner_arg), None, None);
+        match region {
+            users::Region::US => owner = users::User::new(Some(owner_arg), None, None),
+            users::Region::EU => owner = users::User::new(Some(owner_arg), None, Some(users::Region::EU)),
+        }
     }
 
     if let Some(jobs) = cmds.values_of("job") {
-        for job in jobs {
+        let job_count = jobs.len();
+        for (i, job) in jobs.enumerate() {
             let deets: shelper::jobs::JobDetails;
             if !cmds.is_present("access_key") {
                 let admin = users::User::new(None, None, None);
-                deets = match shelper::jobs::JobDetails::new(job, &owner, Some(&admin)) {
+                deets = match jobs::JobDetails::new(job, &owner, Some(&admin)) {
                     Ok(deets) => deets,
                     Err(e) => {
                         eprintln!("{}", e);
@@ -73,7 +96,7 @@ fn main() {
                     }
                 }
             } else {
-                deets = match shelper::jobs::JobDetails::new(job, &owner, Some(&owner)) {
+                deets = match jobs::JobDetails::new(job, &owner, Some(&owner)) {
                     Ok(deets) => deets,
                     Err(e) => {
                         eprintln!("{}", e);
@@ -81,7 +104,9 @@ fn main() {
                     }
                 }
             }
-            print!("{:?}", deets);
+            println!("{}/{}", i + 1, job_count);
+            deets.pretty_print();
+            println!("");
         }
     }
 }

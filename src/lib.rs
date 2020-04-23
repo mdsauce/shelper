@@ -1,5 +1,5 @@
 //! # Shelper
-//! 
+//!
 //! Shelper or Sauce_Helper is a library wrapping the Sauce Labs public API.
 //! It comes with a binary CLI `shelper.exe` to perform common commands like getting details of job(s),
 //! fetching the latest jobs run by a specific user, or fetching the metadata of a build.

@@ -1,6 +1,6 @@
-use super::users;
 use super::auth;
 use super::sauce_errors;
+use super::users;
 use std::error::Error;
 
 /// Returns the JSON info for a Job. `job_info` makes a REST call
@@ -14,10 +14,22 @@ pub fn job_info(
         Some(admin) => admin,
         None => owner,
     };
-    let job_info_api = format!(
-        "https://saucelabs.com/rest/v1/{}/jobs/{}",
-        owner.creds.username, job_id
-    );
+    let job_info_api: std::string::String;
+    match owner.region {
+        users::Region::US => {
+            job_info_api = format!(
+                "https://saucelabs.com/rest/v1/{}/jobs/{}",
+                owner.creds.username, job_id
+            )
+        }
+        users::Region::EU => {
+            job_info_api = format!(
+                "https://eu-central-1.saucelabs.com/rest/v1/{}/jobs/{}",
+                owner.creds.username, job_id
+            )
+        }
+    }
+
     let client = reqwest::Client::new();
     let mut resp = client
         .get(&job_info_api)
@@ -134,43 +146,43 @@ fn over_500_limit() {
 }
 
 #[test]
-    #[should_panic]
-    fn all_jobs_bad_input() {
-        let fake_user = super::users::User::new(
-            Some("bad.user12b1581b".to_string()),
-            Some("1285-fake-b128b519".to_string()),
-            None,
-        );
-        match super::api::all_jobs("91ee45d589ce4177981bf22f911f22c5".to_string(), fake_user) {
-            Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
-            Err(e) => assert_eq!(e.to_string(), ""),
-        }
+#[should_panic]
+fn all_jobs_bad_input() {
+    let fake_user = super::users::User::new(
+        Some("bad.user12b1581b".to_string()),
+        Some("1285-fake-b128b519".to_string()),
+        None,
+    );
+    match super::api::all_jobs("91ee45d589ce4177981bf22f911f22c5".to_string(), fake_user) {
+        Ok(resp) => assert_eq!(resp["jobs"].as_array().unwrap().len(), 32),
+        Err(e) => assert_eq!(e.to_string(), ""),
     }
+}
 
-    #[test]
-    fn get_build_data() {
-        let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
-        let resp = match super::api::build_info("91ee45d589ce4177981bf22f911f22c5", real_user) {
-            Ok(resp) => resp,
-            Err(e) => panic!("{}", e),
-        };
-        assert_eq!(resp["jobs"]["finished"], 32);
-        println!(
-            "Build 91ee45d589ce4177981bf22f911f22c5 has data ---------> {:?}",
-            resp
-        );
-    }
+#[test]
+fn get_build_data() {
+    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let resp = match super::api::build_info("91ee45d589ce4177981bf22f911f22c5", real_user) {
+        Ok(resp) => resp,
+        Err(e) => panic!("{}", e),
+    };
+    assert_eq!(resp["jobs"]["finished"], 32);
+    println!(
+        "Build 91ee45d589ce4177981bf22f911f22c5 has data ---------> {:?}",
+        resp
+    );
+}
 
-    #[test]
-    fn create_new_build_object() {
-        let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
-        let mybuild = match super::builds::Build::new("91ee45d589ce4177981bf22f911f22c5", real_user) {
-            Ok(b) => b,
-            Err(e) => panic!("{}", e),
-        };
-        println!("my build ----->{:?}", mybuild);
-        assert_eq!(
-            mybuild.name,
-            Some("generic build: grey Small Fresh Computer 6.0.4".to_string())
-        )
-    }
+#[test]
+fn create_new_build_object() {
+    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let mybuild = match super::builds::Build::new("91ee45d589ce4177981bf22f911f22c5", real_user) {
+        Ok(b) => b,
+        Err(e) => panic!("{}", e),
+    };
+    println!("my build ----->{:?}", mybuild);
+    assert_eq!(
+        mybuild.name,
+        Some("generic build: grey Small Fresh Computer 6.0.4".to_string())
+    )
+}
