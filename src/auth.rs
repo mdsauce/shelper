@@ -1,6 +1,7 @@
 use std::env;
 
-/// SAUCE_USERNAME:SAUCE_ACCESS_KEY for a user used for authentication.
+/// SAUCE_USERNAME:SAUCE_ACCESS_KEY are used for authentication.
+/// Checks for Environment variables first then accepts user input.
 #[derive(Debug)]
 pub struct Credentials {
     pub username: String,
@@ -28,7 +29,7 @@ pub fn set_credentials(user: Option<String>, key: Option<String>) -> Credentials
     return creds;
 }
 
-/// gets the env variables most commonly used.
+/// gets the env variables  SAUCE_USERNAME and SAUCE_ACCESS_KEY.
 fn env_credentials() -> Credentials {
     const USERNAME: &str = "SAUCE_USERNAME";
     const ACCESS_KEY: &str = "SAUCE_ACCESS_KEY";

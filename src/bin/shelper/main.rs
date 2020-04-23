@@ -56,29 +56,25 @@ fn main() {
         println!("shelper version {}", env!("CARGO_PKG_VERSION"))
     }
 
-    if !cmds.is_present("owner") {
-        println!("You need to pass in the job owner with --owner  or -o");
-        return;
-    }
-
-    let owner_arg = cmds.value_of("owner").unwrap().to_string();
-
     let region = match cmds.is_present("region") {
         true => value_t!(cmds, "region", users::Region).unwrap_or_else(|e| e.exit()),
         false => users::Region::US,
     };
 
     let owner: users::User;
-    if cmds.is_present("access_key") {
+    if cmds.is_present("access_key") && cmds.is_present("owner") {
         let key_arg = cmds.value_of("access_key").unwrap().to_string();
+        let owner_arg = cmds.value_of("owner").unwrap().to_string();
         match region {
             users::Region::US => owner = users::User::new(Some(owner_arg), Some(key_arg), None),
-            users::Region::EU => owner = users::User::new(Some(owner_arg), Some(key_arg), Some(users::Region::EU)),
+            users::Region::EU => {
+                owner = users::User::new(Some(owner_arg), Some(key_arg), Some(users::Region::EU))
+            }
         }
     } else {
         match region {
-            users::Region::US => owner = users::User::new(Some(owner_arg), None, None),
-            users::Region::EU => owner = users::User::new(Some(owner_arg), None, Some(users::Region::EU)),
+            users::Region::US => owner = users::User::new(None, None, None),
+            users::Region::EU => owner = users::User::new(None, None, Some(users::Region::EU)),
         }
     }
 
