@@ -1,5 +1,18 @@
 # Sauce Help
-Rust CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds, and Virtual Desktop, iOS Simulator, & Android Emulator sessions.
+Rust CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  A Job right now is: Virtual Desktop, iOS Simulator, & Android Emulator tests.
+
+## Installation
+Maybe use cargo?  Unsure
+
+Right now best thing is:
+1. Git clone
+2. `cargo build --release`
+3. Find the .exe in `./target/release/shelper`
+
+## Usage
+`shelper -h` or `shelper --help`
+
+`shelper -j some_session_id -j some_session_id` or `shelper -j some_session_id some_session_id some_session_id` are both valid.
 
 ## Development
 `cargo doc --open`: compile and run the documentation
