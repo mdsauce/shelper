@@ -29,7 +29,7 @@ pub struct JobDetails {
     pub passed: Option<bool>,
     pub selenium_version: Option<String>,
     pub public: String,
-    pub status: String,
+    pub consolidated_status: String,
     pub assigned_tunnel_id: Option<String>,
     pub automation_backend: String,
     pub error: Option<String>,
@@ -86,7 +86,7 @@ impl JobDetails {
             self.os, self.browser, self.browser_version
         );
         match &self.error {
-            Some(err) => println!("{}", err),
+            Some(err) => println!("Error: {}", err),
             None => (),
         }
         println!("Session id: {}", self.id);
@@ -103,7 +103,7 @@ impl JobDetails {
             Some(live_test) => println!("Live Test (manual): {}", live_test),
             None => (),
         }
-        println!("Test Status: {}", self.status);
+        println!("Test Status: {}", self.consolidated_status);
         match self.region {
             users::Region::US => println!("Link: https://app.saucelabs.com/tests/{}", self.id),
             users::Region::EU => println!(
