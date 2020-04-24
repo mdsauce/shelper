@@ -4,6 +4,7 @@ extern crate shelper;
 use clap::{App, Arg};
 use shelper::jobs;
 use shelper::users;
+mod input_stripper;
 
 fn main() {
     let cmds = App::new("shelper")
@@ -79,8 +80,9 @@ fn main() {
     }
 
     if let Some(jobs) = cmds.values_of("job") {
-        let job_count = jobs.len();
-        for (i, job) in jobs.enumerate() {
+        let sanitized_jobs = input_stripper::get_job_id(jobs.collect());
+        let job_count = sanitized_jobs.len();
+        for (i, job) in sanitized_jobs.iter().enumerate() {
             let deets: shelper::jobs::JobDetails;
             if !cmds.is_present("access_key") {
                 let admin = users::User::new(None, None, None);

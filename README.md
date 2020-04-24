@@ -17,6 +17,8 @@ Right now best thing is:
 
 `shelper -j 195b150b5 159nb15915 1595n159`
 
+`shelper -j https://app.saucelabs.com/tests/123456`
+
 ## Development
 `cargo doc --open`: compile and run the documentation
 
