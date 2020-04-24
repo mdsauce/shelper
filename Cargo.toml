@@ -1,6 +1,6 @@
 [package]
 name = "shelper"
-description = "CLI and lib for Sauce Labs API"
+description = "Sauce Helper, CLI and lib for Sauce Labs API"
 keywords = ["sauce_labs", "cli"]
 categories = ["command-line-utilities"]
 version = "0.1.0"
