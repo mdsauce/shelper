@@ -1,7 +1,7 @@
 # Sauce Help
 
-[![crates.io](https://img.shields.io/crates/v/shelper.svg)](https://crates.io/crates/shelper)
-[![Documentation](https://docs.rs/shelper/badge.svg)](https://docs.rs/shelper)
+![Crates.io](https://img.shields.io/crates/v/shelper?style=flat-square)
+![Documentation](https://docs.rs/shelper/badge.svg)](https://docs.rs/shelper)
 
 CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  At the time of this writing a Job is: Virtual Desktop, iOS Simulator, or Android Emulator session. Real Device jobs coming in 2020.
 
