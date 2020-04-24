@@ -2,9 +2,11 @@
 Rust CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  A Job right now is: Virtual Desktop, iOS Simulator, & Android Emulator tests.
 
 ## Installation
-Maybe host it with crates.io?  Unsure. 
+Using Cargo (package manager) [crates.io](https://crates.io/):
+1. Install rust + cargo.  Copy-paste this into your command line: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`.  Read more here: https://www.rust-lang.org/tools/install
+2. `cargo install shelper`
 
-Right now best thing is:
+From github:
 1. Git clone
 2. `cargo build --release`
 3. Find the .exe in `./target/release/shelper`
