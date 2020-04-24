@@ -109,6 +109,7 @@ impl JobDetails {
             0 => (),
             _ => println!("Failed cmds: {}", self.commands_not_successful),
         }
+        println!("Proxied: {}", self.proxied);
         match self.region {
             users::Region::US => println!("Link: https://app.saucelabs.com/tests/{}", self.id),
             users::Region::EU => println!(
