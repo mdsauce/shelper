@@ -32,7 +32,9 @@ pub struct JobDetails {
     pub consolidated_status: String,
     pub commands_not_successful: u32,
     pub assigned_tunnel_id: Option<String>,
+    pub app: Option<String>,
     pub automation_backend: String,
+    pub pre_run_executable: Option<String>,
     pub error: Option<String>,
     #[serde(skip)]
     pub region: users::Region,
@@ -72,6 +74,15 @@ impl JobDetails {
             Some(name) => println!("Test Name: {}", name),
             None => (),
         }
+        match &self.app {
+            Some(app) => {
+                match app.len() {
+                    0 => (),
+                    _ => println!("{}", app),
+                }
+            },
+            None => (),
+        }
         match &self.passed {
             Some(true) => println!("User marked as PASSED"),
             Some(false) => println!("User marked as FAILED"),
@@ -108,6 +119,10 @@ impl JobDetails {
         match &self.commands_not_successful {
             0 => (),
             _ => println!("Failed cmds: {}", self.commands_not_successful),
+        }
+        match &self.pre_run_executable {
+            None => (),
+            Some(pre_run) => println!("Pre-run script: {}", pre_run),
         }
         println!("Proxied: {}", self.proxied);
         match self.region {
