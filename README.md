@@ -1,9 +1,16 @@
 # Sauce Help
-Rust CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  A Job right now is: Virtual Desktop, iOS Simulator, & Android Emulator tests.
+
+[![crates.io](https://img.shields.io/crates/v/shelper.svg)](https://crates.io/crates/shelper)
+[![Documentation](https://docs.rs/shelper/badge.svg)](https://docs.rs/shelper)
+
+CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  At the time of this writing a Job is: Virtual Desktop, iOS Simulator, or Android Emulator session. Real Device jobs coming in 2020.
 
 ## Installation
-Using Cargo (package manager) [crates.io](https://crates.io/):
-1. Install rust + cargo.  Copy-paste this into your command line: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`.  Read more here: https://www.rust-lang.org/tools/install
+Using [Cargo (package manager)](https://doc.rust-lang.org/cargo/getting-started/installation.html) install the binary from [crates.io](https://crates.io/crates/shelper):
+1. Install rust + cargo.  Copy-paste and run this: 
+```curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh```  
+
+Read more here: https://www.rust-lang.org/tools/install
 2. `cargo install shelper`
 
 From github:
