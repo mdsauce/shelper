@@ -30,6 +30,7 @@ pub struct JobDetails {
     pub selenium_version: Option<String>,
     pub public: String,
     pub consolidated_status: String,
+    pub commands_not_successful: u32,
     pub assigned_tunnel_id: Option<String>,
     pub automation_backend: String,
     pub error: Option<String>,
@@ -104,6 +105,10 @@ impl JobDetails {
             None => (),
         }
         println!("Test Status: {}", self.consolidated_status);
+        match &self.commands_not_successful {
+            0 => (),
+            _ => println!("Failed cmds: {}", self.commands_not_successful),
+        }
         match self.region {
             users::Region::US => println!("Link: https://app.saucelabs.com/tests/{}", self.id),
             users::Region::EU => println!(
