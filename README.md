@@ -11,6 +11,7 @@ Using [Cargo (package manager)](https://doc.rust-lang.org/cargo/getting-started/
 ```curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh```  
 
 Read more here: https://www.rust-lang.org/tools/install
+
 2. `cargo install shelper`
 
 From github:
