@@ -37,6 +37,7 @@ pub struct JobDetails {
     pub automation_backend: String,
     pub pre_run_executable: Option<String>,
     pub error: Option<String>,
+    pub performance_enabled: Option<bool>,
     pub start_time: i64,
     #[serde(skip)]
     pub region: users::Region,
@@ -125,6 +126,10 @@ impl JobDetails {
             Some(pre_run) => println!("Pre-run script: {}", pre_run),
         }
         println!("Proxied: {}", self.proxied);
+        match &self.performance_enabled {
+            Some(enabled) => println!("Perf: {}", enabled),
+            None => (),
+        }
         match self.region {
             users::Region::US => println!("Link: https://app.saucelabs.com/tests/{}", self.id),
             users::Region::EU => println!(
