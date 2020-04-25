@@ -4,6 +4,7 @@
 //! It comes with a binary CLI `shelper.exe` to perform common commands like getting details of job(s),
 //! fetching the latest jobs run by a specific user, or fetching the metadata of a build.
 
+extern crate chrono;
 extern crate reqwest;
 extern crate serde_json;
 

@@ -12,7 +12,7 @@ fn get_session_id(user_arg: &str) -> Result<String, String> {
     let path: Vec<_> = user_arg.split("/").collect();
     if path.len() != 3 {
         if user_arg.len() <= 25 {
-            return Err(format!("Invalid Url: {}", user_arg))?
+            return Err(format!("Invalid Url: {}", user_arg))?;
         }
         match path.len() {
             1 => return Ok(user_arg.to_string().clone()),

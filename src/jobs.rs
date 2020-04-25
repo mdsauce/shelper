@@ -1,4 +1,5 @@
 use super::users;
+use chrono::{Local, TimeZone, Utc};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -29,10 +30,14 @@ pub struct JobDetails {
     pub passed: Option<bool>,
     pub selenium_version: Option<String>,
     pub public: String,
-    pub status: String,
+    pub consolidated_status: String,
+    pub commands_not_successful: u32,
     pub assigned_tunnel_id: Option<String>,
+    pub app: Option<String>,
     pub automation_backend: String,
+    pub pre_run_executable: Option<String>,
     pub error: Option<String>,
+    pub start_time: i64,
     #[serde(skip)]
     pub region: users::Region,
 }
@@ -71,6 +76,13 @@ impl JobDetails {
             Some(name) => println!("Test Name: {}", name),
             None => (),
         }
+        match &self.app {
+            Some(app) => match app.len() {
+                0 => (),
+                _ => println!("{}", app),
+            },
+            None => (),
+        }
         match &self.passed {
             Some(true) => println!("User marked as PASSED"),
             Some(false) => println!("User marked as FAILED"),
@@ -86,7 +98,7 @@ impl JobDetails {
             self.os, self.browser, self.browser_version
         );
         match &self.error {
-            Some(err) => println!("{}", err),
+            Some(err) => println!("Error: {}", err),
             None => (),
         }
         println!("Session id: {}", self.id);
@@ -103,7 +115,16 @@ impl JobDetails {
             Some(live_test) => println!("Live Test (manual): {}", live_test),
             None => (),
         }
-        println!("Test Status: {}", self.status);
+        println!("Test Status: {}", self.consolidated_status);
+        match &self.commands_not_successful {
+            0 => (),
+            _ => println!("Failed cmds: {}", self.commands_not_successful),
+        }
+        match &self.pre_run_executable {
+            None => (),
+            Some(pre_run) => println!("Pre-run script: {}", pre_run),
+        }
+        println!("Proxied: {}", self.proxied);
         match self.region {
             users::Region::US => println!("Link: https://app.saucelabs.com/tests/{}", self.id),
             users::Region::EU => println!(
@@ -111,6 +132,11 @@ impl JobDetails {
                 self.id
             ),
         }
+        println!(
+            "Started: {} / Your_TZ: {}",
+            Utc.timestamp(self.start_time, 0).to_string(),
+            Local.timestamp(self.start_time, 0)
+        );
     }
 }
 
