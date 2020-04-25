@@ -1,4 +1,5 @@
 use super::users;
+use chrono::{Local, TimeZone, Utc};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -36,6 +37,7 @@ pub struct JobDetails {
     pub automation_backend: String,
     pub pre_run_executable: Option<String>,
     pub error: Option<String>,
+    pub start_time: i64,
     #[serde(skip)]
     pub region: users::Region,
 }
@@ -75,11 +77,9 @@ impl JobDetails {
             None => (),
         }
         match &self.app {
-            Some(app) => {
-                match app.len() {
-                    0 => (),
-                    _ => println!("{}", app),
-                }
+            Some(app) => match app.len() {
+                0 => (),
+                _ => println!("{}", app),
             },
             None => (),
         }
@@ -132,6 +132,11 @@ impl JobDetails {
                 self.id
             ),
         }
+        println!(
+            "Started: {} / Your_TZ: {}",
+            Utc.timestamp(self.start_time, 0).to_string(),
+            Local.timestamp(self.start_time, 0)
+        );
     }
 }
 
