@@ -6,7 +6,7 @@
 CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for specific jobs, builds.  At the time of this writing a Job is: Virtual Desktop, iOS Simulator, or Android Emulator session. Real Device jobs coming in 2020.
 
 ## Installation
-Using [Cargo (package manager)](https://doc.rust-lang.org/cargo/getting-started/installation.html) to install the binary from [crates.io](https://crates.io/crates/shelper).  To install rust + cargo copy-paste and run this: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`. Read more here: https://www.rust-lang.org/tools/install
+Easy mode-> Use [Cargo (package manager)](https://doc.rust-lang.org/cargo/getting-started/installation.html) to install the binary from [crates.io](https://crates.io/crates/shelper).  To install rust + cargo copy-paste and run this: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`. Read more here: https://www.rust-lang.org/tools/install
 
 To install the cli:
 
