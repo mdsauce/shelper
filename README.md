@@ -10,7 +10,7 @@ Easy mode*-> `cargo install shelper`
 
 *You will need `cargo` installed. 
 
-[Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) installs the binary from [crates.io](https://crates.io/crates/shelper).  To install cargo copy-paste:
+[Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) installs the binary from [crates.io](https://crates.io/crates/shelper).  To install cargo, [copy-paste](https://orly-appstore.herokuapp.com/generate?title=Blindly%20copy-pasting%20shell%20scripts&top_text=what%20could%20go%20wrong%3F&author=sudo%20!!&image_code=16&theme=2&guide_text=The%20Whoops%20Edition&guide_text_placement=bottom_right):
 
 ```curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh```
 
