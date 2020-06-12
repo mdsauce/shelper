@@ -10,10 +10,12 @@ CLI wrapper and library for the Sauce Labs public API.  Obtain Job details for s
 
 This is the easiest installation method but you will need `cargo` installed. 
 
-#### Installing Cargo for package management
+#### Installing Cargo
 [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) installs the binary from [crates.io](https://crates.io/crates/shelper).  To install cargo, [copy-paste](https://orly-appstore.herokuapp.com/generate?title=Blindly%20copy-pasting%20shell%20scripts&top_text=what%20could%20go%20wrong%3F&author=sudo%20!!&image_code=16&theme=2&guide_text=The%20Whoops%20Edition&guide_text_placement=bottom_right):
 
 ```curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh```
+
+Accept the prompts and choose the Defaults.
 
 Read more here: https://www.rust-lang.org/tools/install
 
