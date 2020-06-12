@@ -38,7 +38,7 @@ pub struct JobDetails {
     pub pre_run_executable: Option<String>,
     pub error: Option<String>,
     pub performance_enabled: Option<bool>,
-    pub start_time: i64,
+    pub start_time: Option<i64>,
     #[serde(skip)]
     pub region: users::Region,
 }
@@ -61,7 +61,7 @@ impl JobDetails {
         let job_json: serde_json::Value = serde_json::from_str(&api_resp).unwrap();
         let mut job: JobDetails = match serde_json::from_value(job_json) {
             Ok(job) => job,
-            Err(e) => panic!("{}\n{:?}", e, api_resp),
+            Err(e) => panic!("{}\n{}", e, api_resp),
         };
         match owner.region {
             users::Region::EU => job.region = users::Region::EU,
@@ -137,11 +137,14 @@ impl JobDetails {
                 self.id
             ),
         }
-        println!(
-            "Started: {} / Your_TZ: {}",
-            Utc.timestamp(self.start_time, 0).to_string(),
-            Local.timestamp(self.start_time, 0)
-        );
+        match self.start_time {
+            None => (),
+            Some(start) => println!(
+                "Started: {} / Your_TZ: {}",
+                Utc.timestamp(start, 0).to_string(),
+                Local.timestamp(start, 0)
+            )
+        }
     }
 }
 
