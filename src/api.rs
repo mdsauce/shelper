@@ -111,7 +111,7 @@ pub fn build_info(build_id: &str, user: users::User) -> Result<serde_json::Value
 /// we only get the requested number of jobs as raw json
 fn json_user_last_3_jobs() {
     let real_user_env_vars =
-        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+        super::users::User::new(None, None, None);
 
     let jobs_json = super::api::recent_user_jobs(&real_user_env_vars, None, 3).unwrap();
 
@@ -127,7 +127,7 @@ fn json_user_last_3_jobs() {
 #[test]
 fn over_500_limit() {
     let real_user_env_vars =
-        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+        super::users::User::new(None, None, None);
 
     // let _jobs_json = super::jobs::recent_user_jobs(&real_user_env_vars, None, 505).unwrap();
     match super::api::recent_user_jobs(&real_user_env_vars, None, 505) {
@@ -158,7 +158,7 @@ fn all_jobs_bad_input() {
 
 #[test]
 fn get_build_data() {
-    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let real_user = super::users::User::new(None, None, None);
     let resp = match super::api::build_info("91ee45d589ce4177981bf22f911f22c5", real_user) {
         Ok(resp) => resp,
         Err(e) => panic!("{}", e),
@@ -172,7 +172,7 @@ fn get_build_data() {
 
 #[test]
 fn create_new_build_object() {
-    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let real_user = super::users::User::new(None, None, None);
     let mybuild = match super::builds::Build::new("91ee45d589ce4177981bf22f911f22c5", real_user) {
         Ok(b) => b,
         Err(e) => panic!("{}", e),

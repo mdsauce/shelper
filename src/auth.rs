@@ -10,23 +10,13 @@ pub struct Credentials {
 
 /// defaults to using SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables.
 /// Can be overwritten with custom credentials.
-pub fn set_credentials(user: Option<String>, key: Option<String>) -> Credentials {
-    let mut creds: Credentials = Credentials {
-        username: "default".to_string(),
-        access_key: "default".to_string(),
-    };
-    creds.username = match user {
-        Some(user) => user,
-        None => return env_credentials(),
-    };
-    creds.access_key = match key {
-        Some(key) => key,
-        None => return env_credentials(),
-    };
-    if creds.access_key == "" || creds.username == "" {
-        return env_credentials();
+pub fn set_credentials(username: Option<String>, access_key: Option<String>) -> Credentials {
+    match (username, access_key) {
+        (None, None) => return env_credentials(),
+        (Some(username),Some(access_key)) => return Credentials {username, access_key},
+        (Some(_), None) => return env_credentials(),
+        (None, Some(_)) => return env_credentials(),
     }
-    return creds;
 }
 
 /// gets the env variables  SAUCE_USERNAME and SAUCE_ACCESS_KEY.
