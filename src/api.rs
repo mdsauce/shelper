@@ -14,18 +14,17 @@ pub fn job_info(
         Some(admin) => admin,
         None => owner,
     };
-    let job_info_api: std::string::String;
-    match owner.region {
+    let job_info_api: std::string::String = match owner.region {
         users::Region::US => {
-            job_info_api = format!("https://saucelabs.com/rest/v1.1/jobs/{}", job_id)
+            format!("https://saucelabs.com/rest/v1.1/jobs/{}", job_id)
         }
         users::Region::EU => {
-            job_info_api = format!(
+            format!(
                 "https://eu-central-1.saucelabs.com/rest/v1.1/jobs/{}",
                 job_id
             )
         }
-    }
+    };
 
     let client = reqwest::blocking::Client::new();
     let resp = client
