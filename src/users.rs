@@ -31,7 +31,7 @@ impl User {
             },
             None => User {
                 creds: creds,
-                region: Region::US,
+                region: Region::default(),
             },
         }
     }
