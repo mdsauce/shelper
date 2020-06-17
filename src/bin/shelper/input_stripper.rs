@@ -7,7 +7,7 @@ fn get_session_id(user_arg: &str) -> Result<String, String> {
             Err(e) => Err(format!("Invalid Url: {}", e))?,
         };
         let split_url: Vec<_> = job_url.path().split("/").collect();
-        return Ok(split_url[2].to_string().clone());
+        return Ok(split_url[2].to_string());
     };
     let path: Vec<_> = user_arg.split("/").collect();
     if path.len() != 3 {
@@ -15,7 +15,7 @@ fn get_session_id(user_arg: &str) -> Result<String, String> {
             return Err(format!("Invalid Url: {}", user_arg))?;
         }
         match path.len() {
-            1 => return Ok(user_arg.to_string().clone()),
+            1 => return Ok(user_arg.to_string()),
             _ => return Err(format!("Invalid Url: {}", user_arg))?,
         }
     }
