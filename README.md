@@ -33,11 +33,11 @@ To install and compile from source (or to develop):
 `shelper -h` or `shelper --help`
 
 #### Examples
-`shelper -j 129571b50 -j 15b150b5` 
+`shelper --job <session-id> --job <session-id>` 
 
-`shelper -j 195b150b5 159nb15915 1595n159`
+`shelper -j <session-id> <session-id> <session-id>`
 
-`shelper -j https://app.saucelabs.com/tests/123456`
+`shelper -j https://app.saucelabs.com/tests/<session-id>`
 
 ## Development
 `cargo doc --open`: compile and run the documentation
