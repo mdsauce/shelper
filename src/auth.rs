@@ -13,7 +13,12 @@ pub struct Credentials {
 pub fn set_credentials(username: Option<String>, access_key: Option<String>) -> Credentials {
     match (username, access_key) {
         (None, None) => return env_credentials(),
-        (Some(username),Some(access_key)) => return Credentials {username, access_key},
+        (Some(username), Some(access_key)) => {
+            return Credentials {
+                username,
+                access_key,
+            }
+        }
         (Some(_), None) => return env_credentials(),
         (None, Some(_)) => return env_credentials(),
     }

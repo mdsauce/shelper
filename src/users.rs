@@ -48,7 +48,7 @@ impl FromStr for Region {
 
     fn from_str(r: &str) -> Result<Self, Self::Err> {
         match r {
-            "US" | "us"=> Ok(Region::US),
+            "US" | "us" => Ok(Region::US),
             "EU" | "eu" => Ok(Region::EU),
             _ => Err("Region does not exist"),
         }

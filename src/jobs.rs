@@ -143,7 +143,7 @@ impl JobDetails {
                 "Started: {} / Your_TZ: {}",
                 Utc.timestamp(start, 0).to_string(),
                 Local.timestamp(start, 0)
-            )
+            ),
         }
     }
 }
@@ -214,8 +214,7 @@ fn json_serializes_job_details_obj() {
 
 #[test]
 fn get_job_info_produces_jobdetails() {
-    let real_user_env_vars =
-        super::users::User::new(None, None, None);
+    let real_user_env_vars = super::users::User::new(None, None, None);
     let job_text = match super::api::job_info(
         &real_user_env_vars,
         "30b9be879aa84313800c987b7aa325e8",
@@ -236,8 +235,7 @@ fn get_job_info_produces_jobdetails() {
 
 #[test]
 fn job_object_constructed() {
-    let real_user_env_vars =
-        super::users::User::new(None, None, None);
+    let real_user_env_vars = super::users::User::new(None, None, None);
 
     let job: JobDetails = super::jobs::JobDetails::new(
         "30b9be879aa84313800c987b7aa325e8",
@@ -251,8 +249,7 @@ fn job_object_constructed() {
 
 #[test]
 fn job_object_constructed_wo_admin() {
-    let real_user_env_vars =
-        super::users::User::new(None, None, None);
+    let real_user_env_vars = super::users::User::new(None, None, None);
 
     let job: JobDetails = super::jobs::JobDetails::new(
         "30b9be879aa84313800c987b7aa325e8",
