@@ -3,6 +3,16 @@ use super::sauce_errors;
 use super::users;
 use std::error::Error;
 
+fn job_id_api(region: &users::Region, job_id: &str) -> std::string::String {
+    match region {
+        users::Region::US => format!("https://saucelabs.com/rest/v1.1/jobs/{}", job_id),
+        users::Region::EU => format!(
+            "https://eu-central-1.saucelabs.com/rest/v1.1/jobs/{}",
+            job_id
+        ),
+    }
+}
+
 /// Returns the JSON info for a Job. `job_info` makes a REST call
 /// with given credentials to fetch the details of a single job.
 pub fn job_info(
@@ -14,29 +24,19 @@ pub fn job_info(
         Some(admin) => admin,
         None => owner,
     };
-    let job_info_api: std::string::String;
-    match owner.region {
-        users::Region::US => {
-            job_info_api = format!("https://saucelabs.com/rest/v1.1/jobs/{}", job_id)
-        }
-        users::Region::EU => {
-            job_info_api = format!(
-                "https://eu-central-1.saucelabs.com/rest/v1.1/jobs/{}",
-                job_id
-            )
-        }
-    }
+
+    let api = job_id_api(&owner.region, job_id);
 
     let client = reqwest::blocking::Client::new();
     let resp = client
-        .get(&job_info_api)
+        .get(&api)
         .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
         .send()?;
     if !resp.status().is_success() {
         return Err(format!(
             "{} response during GET req to {}",
             resp.status(),
-            job_info_api
+            api
         ))?;
     }
     return Ok(resp.text()?);
@@ -110,8 +110,7 @@ pub fn build_info(build_id: &str, user: users::User) -> Result<serde_json::Value
 /// use the recent_user_jobs api call and confirm
 /// we only get the requested number of jobs as raw json
 fn json_user_last_3_jobs() {
-    let real_user_env_vars =
-        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let real_user_env_vars = super::users::User::new(None, None, None);
 
     let jobs_json = super::api::recent_user_jobs(&real_user_env_vars, None, 3).unwrap();
 
@@ -126,8 +125,7 @@ fn json_user_last_3_jobs() {
 
 #[test]
 fn over_500_limit() {
-    let real_user_env_vars =
-        super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let real_user_env_vars = super::users::User::new(None, None, None);
 
     // let _jobs_json = super::jobs::recent_user_jobs(&real_user_env_vars, None, 505).unwrap();
     match super::api::recent_user_jobs(&real_user_env_vars, None, 505) {
@@ -158,7 +156,7 @@ fn all_jobs_bad_input() {
 
 #[test]
 fn get_build_data() {
-    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let real_user = super::users::User::new(None, None, None);
     let resp = match super::api::build_info("91ee45d589ce4177981bf22f911f22c5", real_user) {
         Ok(resp) => resp,
         Err(e) => panic!("{}", e),
@@ -172,7 +170,7 @@ fn get_build_data() {
 
 #[test]
 fn create_new_build_object() {
-    let real_user = super::users::User::new(Some("".to_string()), Some("".to_string()), None);
+    let real_user = super::users::User::new(None, None, None);
     let mybuild = match super::builds::Build::new("91ee45d589ce4177981bf22f911f22c5", real_user) {
         Ok(b) => b,
         Err(e) => panic!("{}", e),

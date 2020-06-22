@@ -31,7 +31,7 @@ impl User {
             },
             None => User {
                 creds: creds,
-                region: Region::US,
+                region: Region::default(),
             },
         }
     }
@@ -48,10 +48,8 @@ impl FromStr for Region {
 
     fn from_str(r: &str) -> Result<Self, Self::Err> {
         match r {
-            "US" => Ok(Region::US),
-            "EU" => Ok(Region::EU),
-            "eu" => Ok(Region::EU),
-            "us" => Ok(Region::US),
+            "US" | "us" => Ok(Region::US),
+            "EU" | "eu" => Ok(Region::EU),
             _ => Err("Region does not exist"),
         }
     }
