@@ -3,7 +3,7 @@ use super::sauce_errors;
 use super::users;
 use std::error::Error;
 
-fn api_literal(region: &users::Region, job_id: &str) -> std::string::String {
+fn job_id_api(region: &users::Region, job_id: &str) -> std::string::String {
     match region {
         users::Region::US => format!("https://saucelabs.com/rest/v1.1/jobs/{}", job_id),
         users::Region::EU => format!(
@@ -24,18 +24,19 @@ pub fn job_info(
         Some(admin) => admin,
         None => owner,
     };
-    let job_info_api = api_literal(&owner.region, job_id);
+
+    let api = job_id_api(&owner.region, job_id);
 
     let client = reqwest::blocking::Client::new();
     let resp = client
-        .get(&job_info_api)
+        .get(&api)
         .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
         .send()?;
     if !resp.status().is_success() {
         return Err(format!(
             "{} response during GET req to {}",
             resp.status(),
-            job_info_api
+            api
         ))?;
     }
     return Ok(resp.text()?);
