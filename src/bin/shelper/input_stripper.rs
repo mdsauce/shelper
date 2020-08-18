@@ -9,7 +9,7 @@ fn get_session_id(user_arg: &str) -> Result<String, String> {
             Ok(valid_url) => valid_url,
             Err(e) => Err(format!("Invalid Url: {}", e))?,
         };
-        // splice the url on the / symbol and return the value
+        // split the url on the / symbol and return the value
         let split_url: Vec<_> = job_url.path().split("/").collect();
         return Ok(split_url[2].to_string());
     };
