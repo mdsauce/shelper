@@ -1,8 +1,9 @@
 use super::auth;
 use std::str::FromStr;
 
-/// Represents a `User` at saucelabs.com. Contains the Credentials username:access_key
-/// Contains the Region they're in within the context of Sauce data centers
+/// Represents a `User` at saucelabs.com. A user object is made up 
+/// of the username, accesskey, and Region(US vs EU). This can be a customer user
+/// or a Super Admin sauce employee.
 #[derive(Debug)]
 pub struct User {
     pub creds: auth::Credentials,
