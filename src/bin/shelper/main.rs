@@ -15,22 +15,24 @@ fn main() {
         .arg(
             Arg::with_name("version")
                 .long("version")
-                .help("Print the current version of Gimme")
+                .help("Print the current version of Shelper")
                 .takes_value(false),
         )
         .arg(
             Arg::with_name("job")
                 .long("job")
                 .short("j")
-                .help("Get job details.  Takes a URL link to a session or Job ID")
+                .help("Get job details.  Takes a URL link to a session or a Job ID string")
+                .value_names(&["job id", "job URL"])
                 .multiple(true)
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("owner")
-                .help("The sauce user who ran a job")
+                .help("Sauce account that owns a sauce resource (tunnel, job, asset)")
                 .long("owner")
                 .short("o")
+                .value_name("sauce_username")
                 .takes_value(true)
                 .multiple(false),
         )
@@ -39,6 +41,7 @@ fn main() {
                 .help("Sauce Access Key")
                 .short("k")
                 .long("key")
+                .value_name("sauce_access_key")
                 .takes_value(true)
                 .multiple(false),
         )
@@ -48,8 +51,17 @@ fn main() {
                 .short("r")
                 .long("region")
                 .takes_value(true)
+                .value_names(&["EU", "US"])
                 .possible_value("EU")
                 .possible_value("US"),
+        )
+        .arg(
+            Arg::with_name("tunnel")
+                .help("Find information about a tunnel. REQUIRES username that created the tunnel in the Owner flag(-o/--owner)")
+                .short("t")
+                .long("tunnel")
+                .value_name("tunnel_id")
+                .takes_value(true),
         )
         .get_matches();
 
@@ -57,11 +69,13 @@ fn main() {
         println!("shelper version {}", env!("CARGO_PKG_VERSION"))
     }
 
+    // if the user doesn't specify a region default to US
     let region = match cmds.is_present("region") {
         true => value_t!(cmds, "region", users::Region).unwrap_or_else(|e| e.exit()),
         false => users::Region::US,
     };
 
+    // Build out a user w/ key + username + region
     let owner: users::User;
     if cmds.is_present("access_key") && cmds.is_present("owner") {
         let key_arg = cmds.value_of("access_key").unwrap().to_string();
