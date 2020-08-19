@@ -1,6 +1,6 @@
 use url::{ParseError, Url};
 
-/// `get_session_id` strips the session id from a URL. If the user 
+/// `get_session_id` strips the session id from a URL. If the user
 /// passed in the literal session id then it ensures the session id is valid.
 fn get_session_id(user_arg: &str) -> Result<String, String> {
     // did user pass in a job url?
@@ -30,7 +30,7 @@ fn get_session_id(user_arg: &str) -> Result<String, String> {
 }
 
 /// get_job_id returns a vector of sanitized job ids. It accepts the raw vector of
-/// &strs, potential job ids. The potential job ids can be the URL or the literal session id. 
+/// &strs, potential job ids. The potential job ids can be the URL or the literal session id.
 pub fn get_job_id(jobs: Vec<&str>) -> Vec<String> {
     let mut job_ids: Vec<String> = Vec::new();
     for job in jobs {
