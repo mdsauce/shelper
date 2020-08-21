@@ -3,7 +3,20 @@ use super::sauce_errors;
 use super::users;
 use std::error::Error;
 
-fn job_id_api(region: &users::Region, job_id: &str) -> std::string::String {
+fn region_tunnel_api(region: &users::Region, tunnel_id: &str, owner: &str) -> std::string::String {
+    match region {
+        users::Region::US => format!(
+            "https://api.us-west-1.saucelabs.com/rest/v1/{}/tunnels/{}",
+            owner, tunnel_id
+        ),
+        users::Region::EU => format!(
+            "https://api.eu-central-1.saucelabs.com/rest/v1/{}/tunnels/{}",
+            owner, tunnel_id
+        ),
+    }
+}
+
+fn region_job_api(region: &users::Region, job_id: &str) -> std::string::String {
     match region {
         users::Region::US => format!("https://saucelabs.com/rest/v1.1/jobs/{}", job_id),
         users::Region::EU => format!(
@@ -11,6 +24,29 @@ fn job_id_api(region: &users::Region, job_id: &str) -> std::string::String {
             job_id
         ),
     }
+}
+
+/// tunnel_info requires the Owner of a tunnel + the tunnel id to 
+/// return data about the tunnel. Creation time, config, and more are found via the REST API
+pub fn tunnel_info(owner: &users::User, tunnel_id: &str, super_admin: Option<&users::User>) -> Result<String, Box<dyn Error>> {
+    let api = region_tunnel_api(&owner.region, tunnel_id, &owner.creds.username);
+    let client = reqwest::blocking::Client::new();
+    let auth: &users::User = match super_admin {
+        Some(admin) => admin,
+        None => owner,
+    };
+    let resp = client
+        .get(&api)
+        .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
+        .send()?;
+    if !resp.status().is_success() {
+        return Err(format!(
+            "{} response during req to {}",
+            resp.status(),
+            api
+        ))?;
+    }
+    return Ok(resp.text()?);
 }
 
 /// Returns the JSON info for a Job. `job_info` makes a REST call
@@ -25,7 +61,7 @@ pub fn job_info(
         None => owner,
     };
 
-    let api = job_id_api(&owner.region, job_id);
+    let api = region_job_api(&owner.region, job_id);
 
     let client = reqwest::blocking::Client::new();
     let resp = client
@@ -181,3 +217,13 @@ fn create_new_build_object() {
         Some("generic build: grey Small Fresh Computer 6.0.4".to_string())
     )
 }
+
+#[test]
+fn get_tunnel_info() {
+    let real_user_env_vars = super::users::User::new(None, None, None);
+
+    let tunnel_deets = super::api::tunnel_info(&real_user_env_vars, "20073ff17a234bec951b7a51a1bce2ad", Some(&real_user_env_vars)).unwrap();
+
+    println!("{}", tunnel_deets)
+}
+
