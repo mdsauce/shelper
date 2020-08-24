@@ -26,8 +26,8 @@ fn region_job_api(region: &users::Region, job_id: &str) -> std::string::String {
     }
 }
 
-/// tunnel_info requires the Owner of a tunnel + the tunnel id to 
-/// return data about the tunnel. Creation time, config, and more are found via the REST API
+/// `tunnel_info` requires the Owner of a tunnel + the tunnel id to 
+/// return data about the tunnel. Creation time, config, and more are returned from the API call.
 pub fn tunnel_info(owner: &users::User, tunnel_id: &str, super_admin: Option<&users::User>) -> Result<String, Box<dyn Error>> {
     let api = region_tunnel_api(&owner.region, tunnel_id, &owner.creds.username);
     let client = reqwest::blocking::Client::new();
