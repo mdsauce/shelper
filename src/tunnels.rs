@@ -17,7 +17,7 @@ pub struct TunnelMetadata {
     pub name: Option<String>,
     pub creation_time: Option<i64>,
     pub shutdown_time: Option<i64>,
-    pub last_connected_time: Option<i64>
+    pub last_connected_time: Option<i64>,
 }
 
 #[test]
@@ -59,10 +59,10 @@ fn basic_tunnel_json() {
         "no_proxy_caching": false,
         "tunnel_identifier": ""
       }"#;
-      let tunnel_test: TunnelMetadata = match serde_json::from_str(raw_tunnel) {
+    let tunnel_test: TunnelMetadata = match serde_json::from_str(raw_tunnel) {
         Ok(tunnel_metadata) => tunnel_metadata,
-        Err(e) => panic!("{}\n", e)
-      };
-      println!("tunnel object: \n{:?}", tunnel_test);
-      assert_eq!(tunnel_test.owner, "max.dobeck")
+        Err(e) => panic!("{}\n", e),
+    };
+    println!("tunnel object: \n{:?}", tunnel_test);
+    assert_eq!(tunnel_test.owner, "max.dobeck")
 }

@@ -1,7 +1,7 @@
 use super::auth;
 use std::str::FromStr;
 
-/// Represents a `User` at saucelabs.com. A user object is made up 
+/// Represents a `User` at saucelabs.com. A user object is made up
 /// of the username, accesskey, and Region(US vs EU). This can be a customer user
 /// or a Super Admin sauce employee.
 #[derive(Debug)]

@@ -1,3 +1,4 @@
+use super::api;
 use super::users;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -39,7 +40,7 @@ pub struct Jobs {
 
 impl Build {
     pub fn new(build_id: &str, user: users::User) -> Result<Build, Box<dyn Error>> {
-        let info = super::api::build_info(build_id, user)?;
+        let info = api::build_info(build_id, user)?;
         let build: Build = serde_json::from_value(info)?;
         return Ok(build);
     }

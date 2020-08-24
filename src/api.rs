@@ -26,9 +26,13 @@ fn region_job_api(region: &users::Region, job_id: &str) -> std::string::String {
     }
 }
 
-/// `tunnel_info` requires the Owner of a tunnel + the tunnel id to 
+/// `tunnel_info` requires the Owner of a tunnel + the tunnel id to
 /// return data about the tunnel. Creation time, config, and more are returned from the API call.
-pub fn tunnel_info(owner: &users::User, tunnel_id: &str, super_admin: Option<&users::User>) -> Result<String, Box<dyn Error>> {
+pub fn tunnel_info(
+    owner: &users::User,
+    tunnel_id: &str,
+    super_admin: Option<&users::User>,
+) -> Result<String, Box<dyn Error>> {
     let api = region_tunnel_api(&owner.region, tunnel_id, &owner.creds.username);
     let client = reqwest::blocking::Client::new();
     let auth: &users::User = match super_admin {
@@ -40,11 +44,7 @@ pub fn tunnel_info(owner: &users::User, tunnel_id: &str, super_admin: Option<&us
         .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
         .send()?;
     if !resp.status().is_success() {
-        return Err(format!(
-            "{} response during req to {}",
-            resp.status(),
-            api
-        ))?;
+        return Err(format!("{} response during req to {}", resp.status(), api))?;
     }
     return Ok(resp.text()?);
 }
@@ -218,7 +218,11 @@ fn create_new_build_object() {
 #[test]
 fn get_tunnel_info() {
     let real_user_env_vars = super::users::User::new(None, None, None);
-    let tunnel_deets = super::api::tunnel_info(&real_user_env_vars, "20073ff17a234bec951b7a51a1bce2ad", Some(&real_user_env_vars)).unwrap();
+    let tunnel_deets = super::api::tunnel_info(
+        &real_user_env_vars,
+        "20073ff17a234bec951b7a51a1bce2ad",
+        Some(&real_user_env_vars),
+    )
+    .unwrap();
     println!("{}", tunnel_deets)
 }
-
