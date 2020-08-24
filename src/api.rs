@@ -147,9 +147,7 @@ pub fn build_info(build_id: &str, user: users::User) -> Result<serde_json::Value
 /// we only get the requested number of jobs as raw json
 fn json_user_last_3_jobs() {
     let real_user_env_vars = super::users::User::new(None, None, None);
-
     let jobs_json = super::api::recent_user_jobs(&real_user_env_vars, None, 3).unwrap();
-
     let last_3_jobs: serde_json::Value = serde_json::from_str(&jobs_json).unwrap();
     println!(
         "{}\nLength of jobs_json: {}",
@@ -162,7 +160,6 @@ fn json_user_last_3_jobs() {
 #[test]
 fn over_500_limit() {
     let real_user_env_vars = super::users::User::new(None, None, None);
-
     // let _jobs_json = super::jobs::recent_user_jobs(&real_user_env_vars, None, 505).unwrap();
     match super::api::recent_user_jobs(&real_user_env_vars, None, 505) {
         Ok(_) => println!("Shouldn't be here"),
@@ -221,9 +218,7 @@ fn create_new_build_object() {
 #[test]
 fn get_tunnel_info() {
     let real_user_env_vars = super::users::User::new(None, None, None);
-
     let tunnel_deets = super::api::tunnel_info(&real_user_env_vars, "20073ff17a234bec951b7a51a1bce2ad", Some(&real_user_env_vars)).unwrap();
-
     println!("{}", tunnel_deets)
 }
 
