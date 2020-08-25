@@ -15,8 +15,10 @@ pub struct TunnelMetadata {
     pub id: String,
     pub owner: String,
     pub use_kgp: bool,
-    pub no_ssl_bump_list: Option<String>,
-    pub direct_domains_list: Option<String>,
+    #[serde(alias = "no_ssl_bump_domains")]
+    pub no_ssl_bump_list: Option<Vec<String>>,
+    #[serde(alias = "direct_domains")]
+    pub direct_domains_list: Option<Vec<String>>,
     #[serde(alias = "shared_tunnel")]
     pub shared: bool,
     #[serde(alias = "host")]
@@ -52,12 +54,12 @@ impl TunnelMetadata {
 
         match &self.no_ssl_bump_list {
             None => (),
-            Some(no_bump_domains) => println!("No Bump Domains: {}", no_bump_domains),
+            Some(no_bump_domains) => println!("No Bump Domains: {:?}", no_bump_domains),
         }
 
         match &self.direct_domains_list {
             None => (),
-            Some(direct_domains) => println!("Direct Domains: {}", direct_domains),
+            Some(direct_domains) => println!("Direct Domains: {:?}", direct_domains),
         }
         println!("Command Line Flags: {}", &self.metadata.command);
         // Leave for styling
