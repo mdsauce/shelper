@@ -6,6 +6,8 @@ pub struct Metadata {
     pub command: String,
     pub release: String,
     pub hostname: String,
+    #[serde(alias = "nofile_limit")]
+    pub open_file_limit: Option<i64>,
 }
 
 /// `TunnelMetadata` is the overall tunnel config, the maki used,
@@ -51,6 +53,11 @@ impl TunnelMetadata {
         println!("Shared: {}", &self.shared);
         println!("Maki: {}", &self.maki);
         println!("Status: {}", &self.status);
+
+        match &self.metadata.open_file_limit {
+            None => (),
+            Some(limit) => println!("Open File Limit: {}", limit),
+        };
 
         match &self.no_ssl_bump_list {
             None => (),
@@ -111,5 +118,6 @@ fn basic_tunnel_json() {
         Err(e) => panic!("{}\n", e),
     };
     println!("tunnel object: \n{:?}", tunnel_test);
-    assert_eq!(tunnel_test.owner, "max.dobeck")
+    assert_eq!(tunnel_test.owner, "max.dobeck");
+    assert_eq!(tunnel_test.metadata.hostname, "SL-0465")
 }
