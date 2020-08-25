@@ -48,6 +48,7 @@ impl TunnelMetadata {
             None => (),
             Some(direct_domains) => println!("Direct Domains: {}", direct_domains),
         }
+        println!("")
     }
 }
 
