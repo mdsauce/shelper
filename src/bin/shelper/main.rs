@@ -2,7 +2,9 @@
 extern crate clap;
 extern crate shelper;
 use clap::{App, Arg};
+use shelper::api;
 use shelper::jobs;
+use shelper::tunnels;
 use shelper::users;
 mod input_stripper;
 
@@ -23,9 +25,11 @@ fn main() {
                 .long("job")
                 .short("j")
                 .help("Get job details.  Takes a URL link to a session or a Job ID string")
-                .value_names(&["job id", "job URL"])
+                .value_name("one or more job")
                 .multiple(true)
-                .takes_value(true),
+                .takes_value(true)
+                .possible_value("job URL link")
+                .possible_value("session id")
         )
         .arg(
             Arg::with_name("owner")
@@ -41,9 +45,10 @@ fn main() {
                 .help("Sauce Access Key")
                 .short("k")
                 .long("key")
-                .value_name("sauce_access_key")
+                .value_name("key")
                 .takes_value(true)
-                .multiple(false),
+                .multiple(false)
+                .possible_value("sauce-access-key"),
         )
         .arg(
             Arg::with_name("region")
@@ -51,17 +56,21 @@ fn main() {
                 .short("r")
                 .long("region")
                 .takes_value(true)
-                .value_names(&["EU", "US"])
+                .value_name("region")
                 .possible_value("EU")
                 .possible_value("US"),
         )
         .arg(
             Arg::with_name("tunnel")
-                .help("Find information about a tunnel. REQUIRES username that created the tunnel in the Owner flag(-o/--owner)")
+                .help(r#"Get information about a tunnel. REQUIRES:
+- the sauce username that created the tunnel, either in the Owner flag(-o/--owner) OR as an env. variable
+- the access key used to authenticate (env variable or as a flag)
+- the tunnel id, provided at tunnel runtime"#)
                 .short("t")
-                .long("tunnel")
+                .long("tunnelinfo")
                 .value_name("tunnel_id")
-                .takes_value(true),
+                .multiple(true)
+                .takes_value(true)
         )
         .get_matches();
 
@@ -77,7 +86,7 @@ fn main() {
 
     // Build out a user w/ key + username + region
     let owner: users::User;
-    if cmds.is_present("access_key") && cmds.is_present("owner") {
+    if cmds.is_present("owner") && cmds.is_present("access_key") {
         let key_arg = cmds.value_of("access_key").unwrap().to_string();
         let owner_arg = cmds.value_of("owner").unwrap().to_string();
         match region {
@@ -86,6 +95,13 @@ fn main() {
                 owner = users::User::new(Some(owner_arg), Some(key_arg), Some(users::Region::EU))
             }
         }
+    } else if cmds.is_present("owner") {
+        owner = users::User::new(
+            Some(cmds.value_of("owner").unwrap().to_string()),
+            None,
+            Some(region),
+        );
+    // println!("new owner {:?}", owner);
     } else {
         match region {
             users::Region::US => owner = users::User::new(None, None, None),
@@ -119,6 +135,28 @@ fn main() {
             println!("{}/{}", i + 1, job_count);
             deets.pretty_print();
             println!("");
+        }
+    }
+
+    if let Some(t) = cmds.values_of("tunnel") {
+        // println!("Splitting: {:?}", t);
+        let tunnel_list: Vec<&str> = t.collect();
+        let tunnel_count = tunnel_list.len();
+        // println!("{:?}", tunnels)
+        for (i, tunnel) in tunnel_list.iter().enumerate() {
+            if !cmds.is_present("access_key") {
+                let admin = users::User::new(None, None, None);
+                let info: tunnels::TunnelMetadata =
+                    match api::tunnel_raw(&owner, &tunnel, Some(&admin)) {
+                        Ok(resp) => serde_json::from_str(&resp).unwrap(),
+                        Err(e) => {
+                            eprintln!("{}", e);
+                            continue;
+                        }
+                    };
+                println!("{}/{}", i + 1, tunnel_count);
+                info.pretty_print();
+            }
         }
     }
 }

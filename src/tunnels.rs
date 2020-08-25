@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
+/// `TunnelMetadata` is the overall tunnel config, the maki used,
+/// the owner, start time, overall duration etc etc.
 pub struct TunnelMetadata {
     pub id: String,
     pub owner: String,
@@ -14,10 +16,39 @@ pub struct TunnelMetadata {
     pub status: String,
     #[serde(alias = "user_shutdown")]
     pub shutdown_by_user: bool,
+    #[serde(alias = "tunnel_identifier")]
     pub name: Option<String>,
     pub creation_time: Option<i64>,
     pub shutdown_time: Option<i64>,
     pub last_connected_time: Option<i64>,
+    #[serde(skip)]
+    pub duration: Option<i64>,
+}
+
+impl TunnelMetadata {
+    pub fn pretty_print(&self) {
+        println!("Id: {}", &self.id);
+
+        match &self.name {
+            None => (),
+            Some(name) => println!("Name(identifier): {}", name),
+        }
+
+        println!("Owner: {}", &self.owner);
+        println!("Shared: {}", &self.shared);
+        println!("Maki: {}", &self.maki);
+        println!("Status: {}", &self.status);
+
+        match &self.no_ssl_bump_list {
+            None => (),
+            Some(no_bump_domains) => println!("No Bump Domains: {}", no_bump_domains),
+        }
+
+        match &self.direct_domains_list {
+            None => (),
+            Some(direct_domains) => println!("Direct Domains: {}", direct_domains),
+        }
+    }
 }
 
 #[test]

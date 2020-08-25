@@ -26,9 +26,9 @@ fn region_job_api(region: &users::Region, job_id: &str) -> std::string::String {
     }
 }
 
-/// `tunnel_info` requires the Owner of a tunnel + the tunnel id to
+/// `tunnel_raw` requires the Owner of a tunnel + the tunnel id to
 /// return data about the tunnel. Creation time, config, and more are returned from the API call.
-pub fn tunnel_info(
+pub fn tunnel_raw(
     owner: &users::User,
     tunnel_id: &str,
     super_admin: Option<&users::User>,
@@ -216,9 +216,9 @@ fn create_new_build_object() {
 }
 
 #[test]
-fn get_tunnel_info() {
+fn get_tunnel_raw() {
     let real_user_env_vars = super::users::User::new(None, None, None);
-    let tunnel_deets = super::api::tunnel_info(
+    let tunnel_deets = super::api::tunnel_raw(
         &real_user_env_vars,
         "20073ff17a234bec951b7a51a1bce2ad",
         Some(&real_user_env_vars),
