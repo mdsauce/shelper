@@ -19,7 +19,12 @@ pub fn set_credentials(username: Option<String>, access_key: Option<String>) -> 
                 access_key,
             }
         }
-        (Some(_), None) => return env_credentials(),
+        (Some(user), None) => {
+            return Credentials {
+                username: user,
+                access_key: "".to_string(),
+            };
+        }
         (None, Some(_)) => return env_credentials(),
     }
 }
@@ -30,11 +35,17 @@ fn env_credentials() -> Credentials {
     const ACCESS_KEY: &str = "SAUCE_ACCESS_KEY";
     let sauce_username = match env::var(USERNAME) {
         Ok(name) => name,
-        Err(e) => panic!("Problem getting your username from the environment variables {}: {}", USERNAME, e),
+        Err(e) => panic!(
+            "Problem getting your username from the environment variables {}: {}",
+            USERNAME, e
+        ),
     };
     let sauce_access_key = match env::var(ACCESS_KEY) {
         Ok(name) => name,
-        Err(e) => panic!("Problem getting the access key from your environment variables {}: {}", ACCESS_KEY, e),
+        Err(e) => panic!(
+            "Problem getting the access key from your environment variables {}: {}",
+            ACCESS_KEY, e
+        ),
     };
     let creds: Credentials = Credentials {
         username: sauce_username,
