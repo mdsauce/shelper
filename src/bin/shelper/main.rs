@@ -12,7 +12,7 @@ fn main() {
     let cmds = App::new("shelper")
         .version(env!("CARGO_PKG_VERSION"))
         .author(crate_authors!())
-        .about("Get details about jobs and tunnels")
+        .about("Get details about jobs and tunnels. For convenience, shelper will look for the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables. You can overwrite this with the --owner and --key flag.")
         .version(crate_version!())
         .arg(
             Arg::with_name("version")
