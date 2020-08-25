@@ -77,6 +77,7 @@ impl JobDetails {
             Some(name) => println!("Test Name: {}", name),
             None => (),
         }
+
         match &self.app {
             Some(app) => match app.len() {
                 0 => (),
@@ -84,15 +85,18 @@ impl JobDetails {
             },
             None => (),
         }
+
         match &self.passed {
             Some(true) => println!("User marked as PASSED"),
             Some(false) => println!("User marked as FAILED"),
             None => (),
         }
+
         match &self.build {
             Some(build) => println!("Build Name: {}", build),
             None => (),
         }
+
         println!("Owner: {}", self.owner);
         println!(
             "Platform: {} {} {}",
@@ -112,20 +116,26 @@ impl JobDetails {
             None => (),
         }
         println!("Automation Backend: {}", self.automation_backend);
+
         match &self.manual {
             Some(live_test) => println!("Live Test (manual): {}", live_test),
             None => (),
         }
+
         println!("Test Status: {}", self.consolidated_status);
+
         match &self.commands_not_successful {
             0 => (),
             _ => println!("Failed cmds: {}", self.commands_not_successful),
         }
+
         match &self.pre_run_executable {
             None => (),
             Some(pre_run) => println!("Pre-run script: {}", pre_run),
         }
+
         println!("Proxied: {}", self.proxied);
+
         match &self.performance_enabled {
             Some(enabled) => println!("Perf: {}", enabled),
             None => (),

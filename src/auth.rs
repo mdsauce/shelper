@@ -19,7 +19,12 @@ pub fn set_credentials(username: Option<String>, access_key: Option<String>) -> 
                 access_key,
             }
         }
-        (Some(_), None) => return env_credentials(),
+        (Some(user), None) => {
+            return Credentials {
+                username: user,
+                access_key: "".to_string(),
+            };
+        }
         (None, Some(_)) => return env_credentials(),
     }
 }
