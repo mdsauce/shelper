@@ -44,7 +44,7 @@ pub fn tunnel_raw(
         .basic_auth(&auth.creds.username, Some(&auth.creds.access_key))
         .send()?;
     if !resp.status().is_success() {
-        return Err(format!("{} response during req to {}", resp.status(), api))?;
+        return Err(format!("{} response during req to {}. Are you looking for a tunnel owned by {}? Or owned by someone else?", resp.status(), api, &owner.creds.username))?;
     }
     return Ok(resp.text()?);
 }
