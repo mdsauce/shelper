@@ -1,8 +1,16 @@
 use serde::{Deserialize, Serialize};
 
+/// The literal `meatadata`, a nested json object
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Metadata {
+    pub command: String,
+    pub release: String,
+    pub hostname: String,
+}
+
 /// `TunnelMetadata` is the overall tunnel config, the maki used,
 /// the owner, start time, overall duration etc etc.
+#[derive(Serialize, Deserialize, Debug)]
 pub struct TunnelMetadata {
     pub id: String,
     pub owner: String,
@@ -15,7 +23,7 @@ pub struct TunnelMetadata {
     pub maki: String,
     pub status: String,
     #[serde(alias = "user_shutdown")]
-    pub shutdown_by_user: bool,
+    pub shutdown_by_user: Option<bool>,
     #[serde(alias = "tunnel_identifier")]
     pub name: Option<String>,
     pub creation_time: Option<i64>,
@@ -23,6 +31,7 @@ pub struct TunnelMetadata {
     pub last_connected_time: Option<i64>,
     #[serde(skip)]
     pub duration: Option<i64>,
+    pub metadata: Metadata,
 }
 
 impl TunnelMetadata {
@@ -34,6 +43,8 @@ impl TunnelMetadata {
             Some(name) => println!("Name(identifier): {}", name),
         }
 
+        println!("Release Version: {}", &self.metadata.release);
+        println!("Host: {}", &self.metadata.hostname);
         println!("Owner: {}", &self.owner);
         println!("Shared: {}", &self.shared);
         println!("Maki: {}", &self.maki);
@@ -48,6 +59,8 @@ impl TunnelMetadata {
             None => (),
             Some(direct_domains) => println!("Direct Domains: {}", direct_domains),
         }
+        println!("Command Line Flags: {}", &self.metadata.command);
+        // Leave for styling
         println!("")
     }
 }
