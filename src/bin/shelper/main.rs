@@ -12,7 +12,15 @@ fn main() {
     let cmds = App::new("shelper")
         .version(env!("CARGO_PKG_VERSION"))
         .author(crate_authors!())
-        .about("Get details about jobs and tunnels. For convenience, shelper will look for the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables. You can overwrite this with the --owner and --key flag.")
+        .about(r#"Get details about jobs and tunnels. For convenience, shelper will look for the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables. You can overwrite this with the --owner and --key flag.  
+        
+If you want details about a job & you have your Sauce credentials saved as environment variables you would run 
+shelper -j <job-id>
+        
+If you want info about a tunnel you would run
+shelper -t <tunnel-id> -o <owner-of-the-tunnel>
+
+If you owned the tunnel and have your Sauce credentials saved as environment variables you could omit the -o and -k flags."#)
         .version(crate_version!())
         .arg(
             Arg::with_name("version")
@@ -22,7 +30,7 @@ fn main() {
         )
         .arg(
             Arg::with_name("job")
-                .long("job")
+                .long("jobinfo")
                 .short("j")
                 .help("Get job details.  Takes a URL link to a session or a Job ID string")
                 .value_name("one or more job")
