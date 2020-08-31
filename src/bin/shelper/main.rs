@@ -36,8 +36,6 @@ If you owned the tunnel and have your Sauce credentials saved as environment var
                 .value_name("one or more job")
                 .multiple(true)
                 .takes_value(true)
-                .possible_value("job URL link")
-                .possible_value("session id")
         )
         .arg(
             Arg::with_name("owner")
@@ -56,7 +54,6 @@ If you owned the tunnel and have your Sauce credentials saved as environment var
                 .value_name("key")
                 .takes_value(true)
                 .multiple(false)
-                .possible_value("sauce-access-key"),
         )
         .arg(
             Arg::with_name("region")
